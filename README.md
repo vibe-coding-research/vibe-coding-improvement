@@ -59,7 +59,7 @@
 
 ### 1. 계보 그래프 시각화
 
-![계보 그래프 시각화 데모](https://github.com/vibe-coding-research/vibe-coding-improvement/blob/main/%EA%B3%84%EB%B3%B4%EA%B7%B8%EB%9E%98%ED%94%84.gif?raw=true)
+![계보 그래프 시각화 데모](./Demo_image/계보그래프.gif)
 
 계보 그래프는 코드 블록의 생성부터 전파까지 전 과정을 노드와 엣지로 표현한 방향성 비순환 그래프(DAG)다. 각 노드는 하나의 코드 블록을 의미하며, 색상으로 신뢰 등급을 즉시 파악할 수 있다.
 
@@ -78,7 +78,7 @@ RISKY 블록에서 발생한 취약점은 빨간 실선을 따라 의존 블록 
 
 ### 2. GCA 서명 시뮬레이터
 
-![GCA 서명 시뮬레이터 데모](https://github.com/vibe-coding-research/vibe-coding-improvement/blob/main/GCA%20%EC%84%9C%EB%AA%85%20%EC%8B%9C%EB%AE%AC%EB%A0%88%EC%9D%B4%ED%84%B0.png?raw=true)
+![GCA 서명 시뮬레이터 데모](./Demo_image.GCA_서명_시뮬레이터)
 
 AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 체험하는 도구다. 코드와 모델, 세션 ID, 프롬프트를 입력하면 실제 SHA-256 및 HMAC-SHA256 연산을 통해 `block_id`, `prompt_hash`, `attestation_sig`가 실시간으로 생성된다.
 
@@ -88,7 +88,7 @@ AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 �
 
 ### 3. 신뢰 점수 계산기
 
-![신뢰 점수 계산기 데모](https://github.com/vibe-coding-research/vibe-coding-improvement/blob/main/%EC%8B%A0%EB%A2%B0%EC%A0%90%EC%88%98%EA%B3%84%EC%82%B0%EA%B8%B0.gif?raw=true)
+![신뢰 점수 계산기 데모](./Demo_image/신뢰점수계산기.gif)
 
 네 가지 요소를 슬라이더로 조절하면 신뢰 점수와 등급이 실시간으로 바뀌는 인터랙티브 계산기다. GCA 서명 유효성(25%), 모델 신뢰 등급(25%), 사람 검토 이력(30%), 전파 위험도(20%)를 직접 조작하며 점수 산정 로직을 체험할 수 있다.
 
@@ -109,23 +109,23 @@ AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 �
 
 1. **문제 정의**
    바이브 코딩 환경에서 발생하는 문제와 품질·안정성·보안·유지보수 측면의 이슈를 정의한다.
-   👉 [`1-problem-definition.md`](./1-problem-definition.md)
+   👉 [`1-problem-definition.md`](./documents/1-problem-definition.md)
 
 2. **문제의 원인 분석**
    문제 발생의 근본 원인과 개선 필요성을 분석한다.
-   👉 [`2-root-cause-analysis.md`](./2-root-cause-analysis.md)
+   👉 [`2-root-cause-analysis.md`](./documents/2-root-cause-analysis.md)
 
 3. **개선 아이디어 핵심 제안**
    설계·프로세스·운영·검증 관점의 핵심 개선 아이디어를 제시한다.
-   👉 [`3-core-improvement-idea.md`](./3-core-improvement-idea.md)
+   👉 [`3-core-improvement-idea.md`](./documents/3-core-improvement-idea.md)
 
 4. **적용 시나리오 및 기대 효과**
    실제 개발·운영 환경에서의 적용 방식과 기대 효과를 설명한다.
-   👉 [`4-application-scenario-and-effect.md`](./4-application-scenario-and-effect.md)
+   👉 [`4-application-scenario-and-effect.md`](./documents/4-application-scenario-and-effect.md)
 
 5. **한계 및 확장 가능성**
    제안 아이디어의 한계점과 향후 확장 방향을 서술한다.
-   👉 [`5-limitations-and-extension.md`](./5-limitations-and-extension.md)
+   👉 [`5-limitations-and-extension.md`](./documents/5-limitations-and-extension.md)
 
 ---
 
