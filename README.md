@@ -57,7 +57,7 @@
 
 ## 시스템 데모
 
-### 계보 그래프 시각화
+### 1. 계보 그래프 시각화
 
 ![계보 그래프 시각화 데모](https://github.com/vibe-coding-research/vibe-coding-improvement/blob/main/%EA%B3%84%EB%B3%B4%EA%B7%B8%EB%9E%98%ED%94%84.gif?raw=true)
 
@@ -76,10 +76,31 @@ RISKY 블록에서 발생한 취약점은 빨간 실선을 따라 의존 블록 
 
 ---
 
+### 2. GCA 서명 시뮬레이터
+
+![GCA 서명 시뮬레이터 데모](https://github.com/vibe-coding-research/vibe-coding-improvement/blob/main/GCA%20%EC%84%9C%EB%AA%85%20%EC%8B%9C%EB%AE%AC%EB%A0%88%EC%9D%B4%ED%84%B0.png?raw=true)
+
+AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 체험하는 도구다. 코드와 모델, 세션 ID, 프롬프트를 입력하면 실제 SHA-256 및 HMAC-SHA256 연산을 통해 `block_id`, `prompt_hash`, `attestation_sig`가 실시간으로 생성된다.
+
+프롬프트 원문은 저장하지 않고 해시값만 기록하여 내용은 비공개로 유지하면서도 사후 검증이 가능하다. 모델을 `unknown`으로 선택하면 서명 없이 UNVERIFIED로 분류되는 동작을 직접 확인할 수 있다.
+
+---
+
+### 3. 신뢰 점수 계산기
+
+![신뢰 점수 계산기 데모](https://github.com/vibe-coding-research/vibe-coding-improvement/blob/main/%EC%8B%A0%EB%A2%B0%EC%A0%90%EC%88%98%EA%B3%84%EC%82%B0%EA%B8%B0.gif?raw=true)
+
+네 가지 요소를 슬라이더로 조절하면 신뢰 점수와 등급이 실시간으로 바뀌는 인터랙티브 계산기다. GCA 서명 유효성(25%), 모델 신뢰 등급(25%), 사람 검토 이력(30%), 전파 위험도(20%)를 직접 조작하며 점수 산정 로직을 체험할 수 있다.
+
+검토 이력의 가중치가 30%로 가장 높은 것은 설계 의도를 반영한 것이다. AI가 생성했더라도 사람이 충분히 검토한 코드는 높은 신뢰를 받을 수 있으며, 반대로 아무리 안전한 모델이 만든 코드라도 미검토 상태면 RISKY로 분류된다.
+
+---
+
 ## 협업 방식
 
 - GitHub Organization 기반 협업
 - 문서 중심 설계 및 아이디어 정리
+- 브랜치 및 Pull Request를 활용한 아이디어 통합
 
 ---
 
