@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trust Score Calculator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&display=swap');
+
+:root {
+  --bg: #0e0e14;
+  --surface: #141420;
+  --surface2: #1a1a28;
+  --border: #252535;
+  --trusted: #00d4a0;
+  --reviewed: #3b9eff;
+  --unverified: #f5a623;
+  --risky: #ff4d6d;
+  --text: #e8e8f0;
+  --muted: #6060a0;
+  --accent: #9d7fff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Fraunces', serif;
+  min-height: 100vh;
+  padding: 40px 24px;
+  background-image: radial-gradient(ellipse at 20% 20%, #1a0a3a22 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 80%, #0a2a1a22 0%, transparent 60%);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+h1 {
+  font-size: 38px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+h1 em { font-style: italic; color: var(--accent); }
+
+.subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 300;
+}
+
+/* 메인 레이아웃 */
+.layout {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+}
+
+/* 점수 표시 */
+.score-display {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.score-display::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--grade-color, #9d7fff)15 0%, transparent 70%);
+  opacity: 0.15;
+  transition: background 0.4s;
+}
+
+.score-number {
+  font-size: 88px;
+  font-weight: 600;
+  line-height: 1;
+  transition: color 0.4s, transform 0.2s;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+}
+
+.score-grade {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  display: inline-block;
+  transition: all 0.4s;
+}
+
+.score-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 300;
+}
+
+/* 진행 바 */
+.score-bar-wrap {
+  margin-top: 20px;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s;
+}
+
+/* 슬라이더 카드 */
+.sliders-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+}
+
+.slider-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.slider-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.slider-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.slider-weight {
+  font-size: 10px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.slider-desc {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.5;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface2);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+  transition: transform 0.15s;
+  box-shadow: 0 0 8px var(--accent)66;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+.slider-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  width: 36px;
+  text-align: right;
+  color: var(--accent);
+}
+
+/* 우측 패널 */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 공식 카드 */
+.formula-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.formula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #9d7fff;
+  line-height: 1.8;
+  background: var(--surface2);
+  padding: 14px;
+  border-radius: 8px;
+}
+
+.formula .f-key { color: #7ecfff; }
+.formula .f-op { color: var(--muted); }
+.formula .f-result { color: var(--trusted); font-weight: 700; }
+
+/* 등급 기준 카드 */
+.grades-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.grade-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+  cursor: default;
+}
+
+.grade-row.current { background: var(--surface2); }
+
+.grade-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.grade-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; flex: 1; }
+.grade-range { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-left: auto; }
+.grade-action { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+/* 기여도 바 */
+.contrib-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.contrib-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.contrib-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.contrib-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.contrib-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contrib-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text);
+  width: 36px;
+  text-align: right;
+}
+
+/* 권고 배너 */
+.recommend-card {
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: all 0.4s;
+}
+
+.recommend-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.recommend-text {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+}
+
+@keyframes scoreAnim {
+  0% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.score-animate { animation: scoreAnim 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">Trust Score Engine</div>
+  <h1>신뢰 점수 <em>계산기</em></h1>
+  <p class="subtitle">슬라이더를 조절해 코드 블록의 신뢰 점수를 실시간으로 계산하세요</p>
+</div>
+
+<div class="layout">
+
+  <!-- 왼쪽: 점수 + 슬라이더 -->
+  <div>
+    <!-- 점수 표시 -->
+    <div class="score-display" id="score-display">
+      <div class="score-number" id="score-number">0.00</div>
+      <div class="score-grade" id="score-grade">—</div>
+      <div class="score-desc" id="score-desc">슬라이더를 조절하세요</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar-fill" id="score-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- 슬라이더 카드 -->
+    <div class="sliders-card">
+
+      <!-- 1. GCA 서명 -->
+      <div class="slider-section">
+        <div class="slider-header">
+          <div class="slider-name">Attestation(b)</div>
+          <div class="slider-weight">가중치 25%</div>
+        </div>
+        <div class="slider-desc">GCA 서명 유효성 — 생성 맥락 서명이 존재하고 위변조되지 않았는가</div>
+        <div class="slider-row">
+          <input type="range" id="s-attestation" min="0" max="100" value="50" oninput="updateScore()">
+          <div class="slider-val" id="v-attestation">0.50</div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="setPreset('attestation', 100)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">유효=1.0</button>
+          <button onclick="setPreset('attestation', 20)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--unverified); font-family:'JetBrains Mono',monospace; cursor:pointer;">없음=0.2</button>
+          <button onclick="setPreset('attestation', 0)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">위조=0.0</button>
+        </div>
+      </div>
+
+      <!-- 2. 모델 신뢰도 -->
+      <div class="slider-section">
+        <div class="slider-header">
+          <div class="slider-name">ModelTrust(b)</div>
+          <div class="slider-weight">가중치 25%</div>
+        </div>
+        <div class="slider-desc">모델 신뢰 등급 — 해당 모델 버전의 취약점 발생 이력 기반</div>
+        <div class="slider-row">
+          <input type="range" id="s-model" min="0" max="100" value="70" oninput="updateScore()">
+          <div class="slider-val" id="v-model">0.70</div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="setPreset('model', 90)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">안전 모델</button>
+          <button onclick="setPreset('model', 60)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--reviewed); font-family:'JetBrains Mono',monospace; cursor:pointer;">보통</button>
+          <button onclick="setPreset('model', 20)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">취약 이력 多</button>
+        </div>
+      </div>
+
+      <!-- 3. 검토 이력 -->
+      <div class="slider-section">
+        <div class="slider-header">
+          <div class="slider-name">Review(b)</div>
+          <div class="slider-weight">가중치 30%</div>
+        </div>
+        <div class="slider-desc">사람 검토 이력 — 검토자 수, 검토 시점, 검토 깊이 반영 (가장 높은 가중치)</div>
+        <div class="slider-row">
+          <input type="range" id="s-review" min="0" max="100" value="30" oninput="updateScore()">
+          <div class="slider-val" id="v-review">0.30</div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="setPreset('review', 100)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">다수 검토</button>
+          <button onclick="setPreset('review', 50)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--reviewed); font-family:'JetBrains Mono',monospace; cursor:pointer;">1회 검토</button>
+          <button onclick="setPreset('review', 0)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">미검토</button>
+        </div>
+      </div>
+
+      <!-- 4. 전파 위험 -->
+      <div class="slider-section">
+        <div class="slider-header">
+          <div class="slider-name">PropagatedRisk(b)</div>
+          <div class="slider-weight">가중치 20%</div>
+        </div>
+        <div class="slider-desc">전파된 위험도 — 의존 블록에서 전파된 위험 수치 (높을수록 점수 ↓)</div>
+        <div class="slider-row">
+          <input type="range" id="s-risk" min="0" max="100" value="40" oninput="updateScore()">
+          <div class="slider-val" id="v-risk">0.40</div>
+        </div>
+        <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="setPreset('risk', 0)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">전파 없음</button>
+          <button onclick="setPreset('risk', 49)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--unverified); font-family:'JetBrains Mono',monospace; cursor:pointer;">2단계 전파</button>
+          <button onclick="setPreset('risk', 100)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">직접 연결</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 오른쪽 패널 -->
+  <div class="right-panel">
+
+    <!-- 공식 -->
+    <div class="formula-card">
+      <div class="card-label">신뢰 점수 공식</div>
+      <div class="formula">
+T(b) =<br>
+  <span class="f-key">w1</span> <span class="f-op">×</span> Attestation(b)<br>
+  <span class="f-op">+</span> <span class="f-key">w2</span> <span class="f-op">×</span> ModelTrust(b)<br>
+  <span class="f-op">+</span> <span class="f-key">w3</span> <span class="f-op">×</span> Review(b)<br>
+  <span class="f-op">+</span> <span class="f-key">w4</span> <span class="f-op">×</span> (1 <span class="f-op">-</span> PropagatedRisk(b))<br>
+<br>
+= <span class="f-key">0.25</span><span class="f-op">×</span><span id="f-a">0.50</span> <span class="f-op">+</span> <span class="f-key">0.25</span><span class="f-op">×</span><span id="f-m">0.70</span><br>
+<span class="f-op">+</span> <span class="f-key">0.30</span><span class="f-op">×</span><span id="f-r">0.30</span> <span class="f-op">+</span> <span class="f-key">0.20</span><span class="f-op">×</span>(1<span class="f-op">-</span><span id="f-p">0.40</span>)<br>
+<span class="f-op">= </span><span class="f-result" id="f-result">0.00</span>
+      </div>
+    </div>
+
+    <!-- 기여도 -->
+    <div class="contrib-card">
+      <div class="card-label">요소별 기여도</div>
+      <div class="contrib-row">
+        <div class="contrib-label">Attestation</div>
+        <div class="contrib-bar-wrap"><div class="contrib-bar" id="cb-a" style="background:var(--trusted)"></div></div>
+        <div class="contrib-pct" id="cp-a">0.00</div>
+      </div>
+      <div class="contrib-row">
+        <div class="contrib-label">ModelTrust</div>
+        <div class="contrib-bar-wrap"><div class="contrib-bar" id="cb-m" style="background:var(--reviewed)"></div></div>
+        <div class="contrib-pct" id="cp-m">0.00</div>
+      </div>
+      <div class="contrib-row">
+        <div class="contrib-label">Review</div>
+        <div class="contrib-bar-wrap"><div class="contrib-bar" id="cb-r" style="background:var(--accent)"></div></div>
+        <div class="contrib-pct" id="cp-r">0.00</div>
+      </div>
+      <div class="contrib-row">
+        <div class="contrib-label">1-Risk</div>
+        <div class="contrib-bar-wrap"><div class="contrib-bar" id="cb-p" style="background:var(--unverified)"></div></div>
+        <div class="contrib-pct" id="cp-p">0.00</div>
+      </div>
+    </div>
+
+    <!-- 등급 기준 -->
+    <div class="grades-card">
+      <div class="card-label">신뢰 등급 기준</div>
+      <div class="grade-row" id="gr-trusted">
+        <div class="grade-dot" style="background:var(--trusted)"></div>
+        <div class="grade-name" style="color:var(--trusted)">TRUSTED</div>
+        <div class="grade-range">0.80+</div>
+      </div>
+      <div class="grade-row" id="gr-reviewed">
+        <div class="grade-dot" style="background:var(--reviewed)"></div>
+        <div class="grade-name" style="color:var(--reviewed)">REVIEWED</div>
+        <div class="grade-range">0.60~0.79</div>
+      </div>
+      <div class="grade-row" id="gr-unverified">
+        <div class="grade-dot" style="background:var(--unverified)"></div>
+        <div class="grade-name" style="color:var(--unverified)">UNVERIFIED</div>
+        <div class="grade-range">0.40~0.59</div>
+      </div>
+      <div class="grade-row" id="gr-risky">
+        <div class="grade-dot" style="background:var(--risky)"></div>
+        <div class="grade-name" style="color:var(--risky)">RISKY</div>
+        <div class="grade-range">0.00~0.39</div>
+      </div>
+    </div>
+
+    <!-- 권고 배너 -->
+    <div class="recommend-card" id="recommend-card">
+      <div class="recommend-title" id="recommend-title">—</div>
+      <div class="recommend-text" id="recommend-text">슬라이더를 조절하면 권고 조치가 표시됩니다</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const gradeInfo = {
+  trusted:    { color: '#00d4a0', bg: 'rgba(0,212,160,0.1)',   border: 'rgba(0,212,160,0.3)',   label: 'TRUSTED',    desc: '검증된 안전한 코드',           action: '정기 재검토를 권장합니다. 현재 배포 가능한 상태입니다.' },
+  reviewed:   { color: '#3b9eff', bg: 'rgba(59,158,255,0.1)',  border: 'rgba(59,158,255,0.3)',  label: 'REVIEWED',   desc: '검토됐으나 일부 미비',          action: '배포 전 재확인을 권장합니다. 주요 로직을 한 번 더 검토하세요.' },
+  unverified: { color: '#f5a623', bg: 'rgba(245,166,35,0.1)',  border: 'rgba(245,166,35,0.3)',  label: 'UNVERIFIED', desc: '검토 이력 부족',               action: '수동 검토가 필수입니다. 배포 전 반드시 사람이 검토해야 합니다.' },
+  risky:      { color: '#ff4d6d', bg: 'rgba(255,77,109,0.1)', border: 'rgba(255,77,109,0.3)', label: 'RISKY',      desc: '출처 불명 또는 위험 전파 중',    action: '즉시 격리 및 검토가 필요합니다. 해당 블록을 프로덕션에서 분리하세요.' },
+};
+
+function getGrade(score) {
+  if (score >= 0.80) return 'trusted';
+  if (score >= 0.60) return 'reviewed';
+  if (score >= 0.40) return 'unverified';
+  return 'risky';
+}
+
+function setPreset(type, val) {
+  document.getElementById(`s-${type}`).value = val;
+  updateScore();
+}
+
+function updateScore() {
+  const a = document.getElementById('s-attestation').value / 100;
+  const m = document.getElementById('s-model').value / 100;
+  const r = document.getElementById('s-review').value / 100;
+  const p = document.getElementById('s-risk').value / 100;
+
+  // 값 표시
+  document.getElementById('v-attestation').textContent = a.toFixed(2);
+  document.getElementById('v-model').textContent = m.toFixed(2);
+  document.getElementById('v-review').textContent = r.toFixed(2);
+  document.getElementById('v-risk').textContent = p.toFixed(2);
+
+  // 점수 계산
+  const ca = 0.25 * a;
+  const cm = 0.25 * m;
+  const cr = 0.30 * r;
+  const cp = 0.20 * (1 - p);
+  const score = ca + cm + cr + cp;
+
+  const grade = getGrade(score);
+  const info = gradeInfo[grade];
+
+  // 점수 숫자
+  const numEl = document.getElementById('score-number');
+  numEl.classList.remove('score-animate');
+  void numEl.offsetWidth;
+  numEl.classList.add('score-animate');
+  numEl.textContent = score.toFixed(2);
+  numEl.style.color = info.color;
+
+  // 등급 배지
+  const gradeEl = document.getElementById('score-grade');
+  gradeEl.textContent = info.label;
+  gradeEl.style.background = info.bg;
+  gradeEl.style.color = info.color;
+  gradeEl.style.border = `1px solid ${info.border}`;
+
+  document.getElementById('score-desc').textContent = info.desc;
+
+  // 바
+  const bar = document.getElementById('score-bar');
+  bar.style.width = (score * 100) + '%';
+  bar.style.background = info.color;
+
+  // 등급 하이라이팅
+  ['trusted','reviewed','unverified','risky'].forEach(g => {
+    document.getElementById(`gr-${g}`).classList.toggle('current', g === grade);
+  });
+
+  // 공식 업데이트
+  document.getElementById('f-a').textContent = a.toFixed(2);
+  document.getElementById('f-m').textContent = m.toFixed(2);
+  document.getElementById('f-r').textContent = r.toFixed(2);
+  document.getElementById('f-p').textContent = p.toFixed(2);
+  document.getElementById('f-result').textContent = score.toFixed(4);
+  document.getElementById('f-result').style.color = info.color;
+
+  // 기여도 바
+  const maxContrib = 0.25; // 최대 단일 기여도
+  document.getElementById('cb-a').style.width = (ca / 0.25 * 100) + '%';
+  document.getElementById('cb-m').style.width = (cm / 0.25 * 100) + '%';
+  document.getElementById('cb-r').style.width = (cr / 0.30 * 100) + '%';
+  document.getElementById('cb-p').style.width = (cp / 0.20 * 100) + '%';
+  document.getElementById('cp-a').textContent = ca.toFixed(3);
+  document.getElementById('cp-m').textContent = cm.toFixed(3);
+  document.getElementById('cp-r').textContent = cr.toFixed(3);
+  document.getElementById('cp-p').textContent = cp.toFixed(3);
+
+  // 권고 배너
+  const rec = document.getElementById('recommend-card');
+  rec.style.background = info.bg;
+  rec.style.border = `1px solid ${info.border}`;
+  document.getElementById('recommend-title').textContent = `[${info.label}] 권고 조치`;
+  document.getElementById('recommend-title').style.color = info.color;
+  document.getElementById('recommend-text').textContent = info.action;
+}
+
+// 초기 실행
+updateScore();
+</script>
+</body>
+</html>
