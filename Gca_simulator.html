@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCA Signature Simulator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #f0f4f0;
+  --surface: #ffffff;
+  --surface2: #f7faf7;
+  --border: #d4e0d4;
+  --accent: #1a6b3c;
+  --accent2: #2d9e5f;
+  --accent3: #e8f5ee;
+  --text: #1a2a1e;
+  --muted: #6b8c72;
+  --code-bg: #0f1f14;
+  --code-text: #7fff9a;
+  --warn: #e05a00;
+  --trusted: #1a6b3c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  padding: 32px 24px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--accent3);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.layout {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+textarea, select, input[type="text"] {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+textarea:focus, select:focus, input:focus {
+  border-color: var(--accent2);
+}
+
+textarea { min-height: 80px; }
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b8c72' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.btn-generate {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+.btn-generate:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-generate:active { transform: translateY(0); }
+
+/* 출력 카드 */
+.output-card {
+  grid-column: 1 / -1;
+  background: var(--code-bg);
+  border: 1px solid #1e3a28;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid #1e3a28;
+}
+
+.output-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #4a9e6a;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.output-dots {
+  display: flex; gap: 6px;
+}
+
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+
+.output-body {
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  color: #4a9e6a;
+  min-height: 200px;
+}
+
+.output-empty {
+  color: #2a5a38;
+  font-style: italic;
+  font-size: 12px;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.out-key { color: #4a9e6a; }
+.out-val { color: var(--code-text); }
+.out-hash { color: #ffd700; word-break: break-all; }
+.out-sig { color: #ff9f7a; word-break: break-all; }
+.out-ts { color: #7ecfff; }
+.out-dim { color: #2a5a38; }
+.out-label { color: #c8ffda; font-weight: 600; }
+
+/* 상태 배지 */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-valid { background: #0d2e1a; color: #00d46a; border: 1px solid #1a5a30; }
+.status-pending { background: #1a1a00; color: #ffd700; border: 1px solid #3a3a00; }
+
+/* 흐름 다이어그램 */
+.flow-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.flow-title {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.flow-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.step-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.step-box.active {
+  background: var(--accent3);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.step-arrow {
+  font-size: 14px;
+  color: var(--border);
+  padding: 0 2px;
+  align-self: center;
+  padding-bottom: 12px;
+}
+
+.step-label {
+  font-size: 9px;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* 복사 버튼 */
+.copy-btn {
+  background: #1e3a28;
+  border: 1px solid #2a5a38;
+  color: #4a9e6a;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.copy-btn:hover { background: #2a5a38; color: var(--code-text); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animated { animation: fadeIn 0.3s ease; }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--code-text);
+  vertical-align: middle;
+  animation: blink 1s infinite;
+  margin-left: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="badge">GCA · Generation Context Attestation</div>
+  <h1>생성 맥락 서명 시뮬레이터</h1>
+  <p class="subtitle">AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 체험해보세요</p>
+</div>
+
+<div class="layout">
+
+  <!-- 입력 카드 1: 코드 -->
+  <div class="card">
+    <div class="card-title">코드 입력</div>
+
+    <div class="field">
+      <label>code_block</label>
+      <textarea id="code-input" placeholder="AI가 생성한 코드를 입력하세요...
+예) def authenticate(user, password):
+    return db.query(user, password)"></textarea>
+    </div>
+
+    <div class="field">
+      <label>model_id</label>
+      <select id="model-select">
+        <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
+        <option value="claude-opus-4-6">claude-opus-4-6</option>
+        <option value="gpt-4o">gpt-4o</option>
+        <option value="gpt-4o-mini">gpt-4o-mini</option>
+        <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+        <option value="unknown">unknown (서명 없음)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>session_id</label>
+      <input type="text" id="session-input" placeholder="vibe-sess-00001" value="vibe-sess-00421">
+    </div>
+
+    <div class="field">
+      <label>prompt (선택 — 해시만 저장됨)</label>
+      <textarea id="prompt-input" style="min-height:60px" placeholder="사용자 인증 함수를 만들어줘. DB에서 user와 password를 조회하는 방식으로"></textarea>
+    </div>
+
+    <button class="btn-generate" onclick="generateGCA()">⬡ GCA 서명 생성</button>
+
+    <div class="flow-card">
+      <div class="flow-title">서명 생성 흐름</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-box" id="step-1">code_block</div>
+          <div class="step-label">입력</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-box" id="step-2">AST 정규화</div>
+          <div class="step-label">normalize</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-box" id="step-3">SHA-256</div>
+          <div class="step-label">block_id</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-box" id="step-4">메타데이터 결합</div>
+          <div class="step-label">metadata</div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-box" id="step-5">HMAC-SHA256</div>
+          <div class="step-label">서명</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 입력 카드 2: 추가 정보 -->
+  <div class="card">
+    <div class="card-title">서명 설정</div>
+
+    <div class="field">
+      <label>parent_block_id (선택 — 수정 전 블록)</label>
+      <input type="text" id="parent-input" placeholder="block-0000 (신규 생성이면 비워두세요)">
+    </div>
+
+    <div class="field">
+      <label>reviewer (선택 — 검토자)</label>
+      <input type="text" id="reviewer-input" placeholder="검토자 이름 또는 GitHub ID">
+    </div>
+
+    <div style="margin-top: 20px; padding: 16px; background: var(--surface2); border-radius: 10px; border: 1px solid var(--border);">
+      <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">GCA 설계 원칙</div>
+      <div style="font-size: 12px; color: var(--muted); line-height: 1.8;">
+        <div style="margin-bottom: 6px;">🔒 <strong style="color:var(--text)">감지가 아닌 기록</strong> — AI 생성 코드를 사후에 탐지하는 방식의 정확도 한계를 우회합니다</div>
+        <div style="margin-bottom: 6px;">🔑 <strong style="color:var(--text)">프롬프트 비공개</strong> — 프롬프트 원문은 저장하지 않고 해시만 기록합니다</div>
+        <div style="margin-bottom: 6px;">🔗 <strong style="color:var(--text)">계보 연결</strong> — parent_block_id로 수정 전후 블록을 체인처럼 연결합니다</div>
+        <div>✅ <strong style="color:var(--text)">위변조 감지</strong> — HMAC 서명으로 메타데이터 변조를 탐지합니다</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 16px; padding: 14px; background: #fff8f0; border-radius: 10px; border: 1px solid #f0ddc8;">
+      <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--warn); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">⚠ unknown 모델 선택 시</div>
+      <div style="font-size: 12px; color: #8a5a30; line-height: 1.6;">GCA 서명이 생성되지 않아 코드가 <strong>UNVERIFIED</strong> 등급으로 분류됩니다. 외부에서 복사된 코드가 이 경우에 해당합니다.</div>
+    </div>
+  </div>
+
+  <!-- 출력 카드 -->
+  <div class="output-card">
+    <div class="output-header">
+      <span class="output-title">GCA Output</span>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="status-badge" class="status-badge status-pending">● 대기 중</span>
+        <button class="copy-btn" onclick="copyOutput()">복사</button>
+      </div>
+    </div>
+    <div class="output-body" id="output-body">
+      <div class="output-empty">입력값을 채우고 "GCA 서명 생성" 버튼을 클릭하세요<span class="cursor"></span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function hmacSha256(key, message) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', enc.encode(key),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', keyMaterial, enc.encode(message));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function normalizeAST(code) {
+  // 실제 AST 정규화 시뮬레이션: 공백/주석/변수명 제거
+  return code
+    .replace(/\/\/.*$/gm, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/#.*$/gm, '')
+    .trim()
+    .toLowerCase();
+}
+
+async function animateSteps() {
+  const steps = ['step-1','step-2','step-3','step-4','step-5'];
+  for (let i = 0; i < steps.length; i++) {
+    steps.forEach(s => document.getElementById(s).classList.remove('active'));
+    document.getElementById(steps[i]).classList.add('active');
+    await new Promise(r => setTimeout(r, 300));
+  }
+}
+
+async function generateGCA() {
+  const code = document.getElementById('code-input').value.trim();
+  const model = document.getElementById('model-select').value;
+  const session = document.getElementById('session-input').value.trim() || 'vibe-sess-00001';
+  const prompt = document.getElementById('prompt-input').value.trim();
+  const parent = document.getElementById('parent-input').value.trim();
+  const reviewer = document.getElementById('reviewer-input').value.trim();
+
+  if (!code) {
+    document.getElementById('output-body').innerHTML = '<div class="output-empty" style="color:#ff6b4a">⚠ 코드를 입력해주세요</div>';
+    return;
+  }
+
+  // 애니메이션
+  animateSteps();
+
+  const timestamp = new Date().toISOString();
+  const normalized = normalizeAST(code);
+
+  // 해시 생성
+  const blockId = 'block-' + (await sha256(normalized + model + session)).substring(0, 6);
+  const promptHash = prompt ? (await sha256(prompt)).substring(0, 16) + '...' : 'null';
+  const codeHash = (await sha256(normalized)).substring(0, 16) + '...';
+
+  // HMAC 서명
+  let attestationSig = null;
+  if (model !== 'unknown') {
+    const payload = `${blockId}|${model}|${session}|${timestamp}|${promptHash}`;
+    attestationSig = (await hmacSha256('gca-secret-key', payload)).substring(0, 32) + '...';
+  }
+
+  const isUnknown = model === 'unknown';
+
+  // 등급 결정
+  let grade, gradeColor;
+  if (isUnknown) { grade = 'UNVERIFIED'; gradeColor = '#f5a623'; }
+  else if (reviewer) { grade = 'REVIEWED'; gradeColor = '#3b9eff'; }
+  else { grade = 'UNVERIFIED'; gradeColor = '#f5a623'; }
+
+  await new Promise(r => setTimeout(r, 1600));
+
+  const badge = document.getElementById('status-badge');
+  if (isUnknown) {
+    badge.className = 'status-badge status-pending';
+    badge.textContent = '⚠ 서명 없음';
+  } else {
+    badge.className = 'status-badge status-valid';
+    badge.textContent = '✓ 서명 완료';
+  }
+
+  const outputBody = document.getElementById('output-body');
+  outputBody.classList.remove('animated');
+  void outputBody.offsetWidth;
+  outputBody.classList.add('animated');
+
+  outputBody.innerHTML = `
+<span class="out-dim">// ── Generation Context Attestation (GCA) ──────────────────</span>
+<span class="out-dim">// 생성 시각: ${new Date().toLocaleString('ko-KR')}</span>
+
+<span class="out-label">GCA {</span>
+  <span class="out-key">  block_id          </span>= <span class="out-hash">"${blockId}"</span>
+  <span class="out-key">  model_id          </span>= <span class="out-val">"${model}"</span>
+  <span class="out-key">  session_id        </span>= <span class="out-val">"${session}"</span>
+  <span class="out-key">  generation_ts     </span>= <span class="out-ts">"${timestamp}"</span>
+  <span class="out-key">  prompt_hash       </span>= <span class="out-hash">"${promptHash}"</span>
+  <span class="out-key">  code_hash         </span>= <span class="out-hash">"${codeHash}"</span>
+  <span class="out-key">  parent_block_id   </span>= <span class="out-val">"${parent || 'null'}"</span>
+  <span class="out-key">  reviewer          </span>= <span class="out-val">"${reviewer || 'null'}"</span>
+  <span class="out-key">  attestation_sig   </span>= ${attestationSig
+    ? `<span class="out-sig">"${attestationSig}"</span>`
+    : `<span style="color:#ff6b4a">null  // ⚠ 서명 없음 — UNVERIFIED 등급 분류`}
+  <span class="out-key">  initial_grade     </span>= <span style="color:${gradeColor}">"${grade}"</span>
+<span class="out-label">}</span>
+
+<span class="out-dim">// ── 계보 연결 상태 ──────────────────────────────────────────</span>
+<span class="out-key">parent_linked </span>= <span style="color:${parent ? '#00d46a' : '#f5a623'}">${parent ? `true  // → ${parent}` : 'false  // 신규 블록 (계보 시작점)'}</span>
+<span class="out-key">lineage_ready </span>= <span style="color:${!isUnknown ? '#00d46a' : '#ff6b4a'}">${!isUnknown ? 'true' : 'false  // GCA 없으면 계보 추적 불가'}</span>
+`;
+}
+
+function copyOutput() {
+  const text = document.getElementById('output-body').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '복사됨 ✓';
+    setTimeout(() => { btn.textContent = '복사'; }, 1500);
+  });
+}
+</script>
+</body>
+</html>
