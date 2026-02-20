@@ -109,23 +109,23 @@ AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 �
 
 1. **문제 정의**
    바이브 코딩 환경에서 발생하는 문제와 품질·안정성·보안·유지보수 측면의 이슈를 정의한다.
-   👉 [`1-problem-definition.md`](./documents/1-problem-definition.md)
+   👉 [`1-problem-definition.md`](./Documents/1-problem-definition.md)
 
 2. **문제의 원인 분석**
    문제 발생의 근본 원인과 개선 필요성을 분석한다.
-   👉 [`2-root-cause-analysis.md`](./documents/2-root-cause-analysis.md)
+   👉 [`2-root-cause-analysis.md`](./Documents/2-root-cause-analysis.md)
 
 3. **개선 아이디어 핵심 제안**
    설계·프로세스·운영·검증 관점의 핵심 개선 아이디어를 제시한다.
-   👉 [`3-core-improvement-idea.md`](./documents/3-core-improvement-idea.md)
+   👉 [`3-core-improvement-idea.md`](./Documents/3-core-improvement-idea.md)
 
 4. **적용 시나리오 및 기대 효과**
    실제 개발·운영 환경에서의 적용 방식과 기대 효과를 설명한다.
-   👉 [`4-application-scenario-and-effect.md`](./documents/4-application-scenario-and-effect.md)
+   👉 [`4-application-scenario-and-effect.md`](./Documents/4-application-scenario-and-effect.md)
 
 5. **한계 및 확장 가능성**
    제안 아이디어의 한계점과 향후 확장 방향을 서술한다.
-   👉 [`5-limitations-and-extension.md`](./documents/5-limitations-and-extension.md)
+   👉 [`5-limitations-and-extension.md`](./Documents/5-limitations-and-extension.md)
 
 ---
 
