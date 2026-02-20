@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Lineage Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #080c14;
+    --surface: #0d1420;
+    --surface2: #111827;
+    --border: #1e2d45;
+    --trusted: #00d4a0;
+    --reviewed: #3b9eff;
+    --unverified: #f5a623;
+    --risky: #ff4d6d;
+    --human: #a78bfa;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #00d4a0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── 헤더 ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--trusted), #0066cc);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .logo-text { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo-sub { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+
+  .header-stats {
+    display: flex;
+    gap: 24px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 3px;
+  }
+
+  .header-controls {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+
+  /* ── 레이아웃 ── */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── 사이드바 ── */
+  .sidebar {
+    width: 260px;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .sidebar-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    padding: 5px 8px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+
+  .legend-item:hover { background: var(--surface2); }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-name { font-size: 12px; font-weight: 600; }
+  .legend-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── 노드 상세 패널 ── */
+  .detail-panel {
+    padding: 16px;
+    flex: 1;
+  }
+
+  .detail-empty {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.6;
+  }
+
+  .detail-block-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .detail-score {
+    font-size: 36px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .detail-grade {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 14px;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+  .detail-key { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+  .detail-val { font-weight: 600; font-size: 11px; text-align: right; max-width: 140px; word-break: break-all; }
+
+  .warning-list { margin-top: 12px; }
+
+  .warning-item {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 6px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .warn-info { background: rgba(59,158,255,0.12); color: #3b9eff; }
+  .warn-warning { background: rgba(245,166,35,0.12); color: #f5a623; }
+  .warn-danger { background: rgba(255,77,109,0.12); color: #ff4d6d; }
+
+  /* ── 그래프 영역 ── */
+  .graph-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #graph-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── 노드 스타일 ── */
+  .node circle {
+    transition: r 0.2s, filter 0.2s;
+    cursor: pointer;
+  }
+
+  .node:hover circle { filter: brightness(1.3); }
+
+  .node text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: var(--text);
+    pointer-events: none;
+    text-anchor: middle;
+  }
+
+  .node .node-id {
+    font-size: 9px;
+    fill: var(--muted);
+  }
+
+  /* ── 링크 ── */
+  .link {
+    stroke-opacity: 0.5;
+    fill: none;
+  }
+
+  .link-arrow {
+    fill-opacity: 0.5;
+  }
+
+  /* ── 툴팁 ── */
+  .tooltip {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    pointer-events: none;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    min-width: 180px;
+  }
+
+  .tooltip.visible { opacity: 1; }
+  .tooltip-title { font-weight: 700; margin-bottom: 6px; font-size: 12px; }
+  .tooltip-row { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); margin-top: 3px; }
+  .tooltip-row span:last-child { color: var(--text); }
+
+  /* ── 미니맵 같은 우하단 ── */
+  .graph-overlay {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .overlay-btn {
+    width: 32px; height: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: border-color 0.15s;
+    color: var(--text);
+  }
+
+  .overlay-btn:hover { border-color: var(--accent); }
+
+  /* ── 하단 경고 바 ── */
+  .alert-bar {
+    background: rgba(255,77,109,0.1);
+    border-top: 1px solid rgba(255,77,109,0.3);
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  .alert-dot {
+    width: 8px; height: 8px;
+    background: var(--risky);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .alert-text { color: #ff4d6d; }
+  .alert-muted { color: var(--muted); margin-left: auto; }
+
+  /* 선택된 노드 링 */
+  .node.selected circle {
+    stroke-width: 3px !important;
+    filter: brightness(1.4) drop-shadow(0 0 8px currentColor);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⬡</div>
+    <div>
+      <div class="logo-text">Code Lineage Tracker</div>
+      <div class="logo-sub">AI 생성 코드 계보 기반 신뢰 추적 시스템</div>
+    </div>
+  </div>
+
+  <div class="header-stats">
+    <div class="stat">
+      <div class="stat-val" style="color:var(--trusted)" id="stat-trusted">0</div>
+      <div class="stat-label">TRUSTED</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:var(--reviewed)" id="stat-reviewed">0</div>
+      <div class="stat-label">REVIEWED</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:var(--unverified)" id="stat-unverified">0</div>
+      <div class="stat-label">UNVERIFIED</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:var(--risky)" id="stat-risky">0</div>
+      <div class="stat-label">RISKY</div>
+    </div>
+  </div>
+
+  <div class="header-controls">
+    <button class="btn active" id="btn-all" onclick="filterNodes('all')">전체</button>
+    <button class="btn" id="btn-risky" onclick="filterNodes('risky')">위험만</button>
+    <button class="btn" id="btn-ai" onclick="filterNodes('ai')">AI 생성</button>
+    <button class="btn" onclick="resetSimulation()">↺ 재배치</button>
+  </div>
+</header>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="section-title">신뢰 등급</div>
+      <div class="legend-item" onclick="filterNodes('trusted')">
+        <div class="legend-dot" style="background:var(--trusted)"></div>
+        <span class="legend-name">TRUSTED</span>
+        <span class="legend-count" id="lc-trusted">-</span>
+      </div>
+      <div class="legend-item" onclick="filterNodes('reviewed')">
+        <div class="legend-dot" style="background:var(--reviewed)"></div>
+        <span class="legend-name">REVIEWED</span>
+        <span class="legend-count" id="lc-reviewed">-</span>
+      </div>
+      <div class="legend-item" onclick="filterNodes('unverified')">
+        <div class="legend-dot" style="background:var(--unverified)"></div>
+        <span class="legend-name">UNVERIFIED</span>
+        <span class="legend-count" id="lc-unverified">-</span>
+      </div>
+      <div class="legend-item" onclick="filterNodes('risky')">
+        <div class="legend-dot" style="background:var(--risky)"></div>
+        <span class="legend-name">RISKY</span>
+        <span class="legend-count" id="lc-risky">-</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-title">코드 출처</div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--muted); border: 2px solid var(--accent)"></div>
+        <span class="legend-name">AI 생성 (GCA)</span>
+        <span class="legend-count" id="lc-ai">-</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--human)"></div>
+        <span class="legend-name">Human 작성</span>
+        <span class="legend-count" id="lc-human">-</span>
+      </div>
+    </div>
+
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-empty">노드를 클릭하면<br>상세 정보가 표시됩니다</div>
+    </div>
+  </div>
+
+  <div class="graph-area">
+    <svg id="graph-svg"></svg>
+    <div class="tooltip" id="tooltip"></div>
+    <div class="graph-overlay">
+      <div class="overlay-btn" onclick="zoomIn()" title="확대">+</div>
+      <div class="overlay-btn" onclick="zoomOut()" title="축소">−</div>
+      <div class="overlay-btn" onclick="zoomFit()" title="전체 보기">⊡</div>
+    </div>
+  </div>
+</div>
+
+<div class="alert-bar" id="alert-bar">
+  <div class="alert-dot"></div>
+  <span class="alert-text">위험 전파 감지</span>
+  <span id="alert-msg">RISKY 블록에서 위험이 전파되고 있습니다. 클릭하여 확인하세요.</span>
+  <span class="alert-muted" id="alert-time"></span>
+</div>
+
+<script>
+// ── 샘플 데이터 ──
+const graphData = {
+  nodes: [
+    // AI 생성 - TRUSTED
+    { id: "block-001", label: "auth_handler", grade: "trusted", score: 0.92, source: "ai", model: "claude-sonnet-4-6", session: "sess-042", timestamp: "2025-05-01", reviewer: "김개발", warnings: [{type:"info", msg:"GCA 서명 확인됨"}] },
+    { id: "block-002", label: "login_validate", grade: "trusted", score: 0.88, source: "ai", model: "gpt-4o", session: "sess-042", timestamp: "2025-05-01", reviewer: "이리뷰", warnings: [{type:"info", msg:"GCA 서명 확인됨"},{type:"info", msg:"검토 이력 2건"}] },
+    { id: "block-003", label: "token_gen", grade: "reviewed", score: 0.71, source: "ai", model: "claude-sonnet-4-6", session: "sess-055", timestamp: "2025-05-08", reviewer: "박검토", warnings: [{type:"info", msg:"GCA 서명 확인됨"},{type:"warning", msg:"검토 이력 1건 (30일 경과)"}] },
+    // AI 생성 - RISKY (취약점 원점)
+    { id: "block-004", label: "sql_query", grade: "risky", score: 0.21, source: "ai", model: "gpt-4o", session: "sess-061", timestamp: "2025-05-15", reviewer: null, warnings: [{type:"danger", msg:"SQL Injection 패턴 감지"},{type:"danger", msg:"검토 이력 없음 (21일 경과)"},{type:"warning", msg:"동일 모델 유사 패턴 취약점 3건"}] },
+    // 전파 블록들
+    { id: "block-005", label: "user_fetch", grade: "unverified", score: 0.38, source: "ai", model: "gpt-4o", session: "sess-061", timestamp: "2025-05-15", reviewer: null, warnings: [{type:"danger", msg:"block-004 취약점 전파 (위험도 0.70)"},{type:"warning", msg:"검토 이력 없음"}] },
+    { id: "block-006", label: "data_pipe", grade: "unverified", score: 0.41, source: "ai", model: "claude-sonnet-4-6", session: "sess-063", timestamp: "2025-05-16", reviewer: null, warnings: [{type:"warning", msg:"block-004 간접 전파 (위험도 0.49)"},{type:"info", msg:"GCA 서명 확인됨"}] },
+    { id: "block-007", label: "report_gen", grade: "unverified", score: 0.45, source: "ai", model: "claude-sonnet-4-6", session: "sess-063", timestamp: "2025-05-16", reviewer: null, warnings: [{type:"warning", msg:"block-004 간접 전파 (위험도 0.49)"}] },
+    // Human 작성
+    { id: "block-008", label: "config_load", grade: "trusted", score: 0.95, source: "human", model: null, session: null, timestamp: "2025-04-20", reviewer: "김개발", warnings: [{type:"info", msg:"Human 작성 코드"}] },
+    { id: "block-009", label: "error_handler", grade: "reviewed", score: 0.74, source: "human", model: null, session: null, timestamp: "2025-04-25", reviewer: "이리뷰", warnings: [{type:"info", msg:"Human 작성 코드"},{type:"info", msg:"검토 이력 3건"}] },
+    // UNVERIFIED (복붙)
+    { id: "block-010", label: "hash_util", grade: "unverified", score: 0.42, source: "ai", model: "unknown", session: null, timestamp: "2025-05-20", reviewer: null, warnings: [{type:"warning", msg:"GCA 서명 없음 (외부 유입 추정)"},{type:"warning", msg:"검토 이력 없음"}] },
+    { id: "block-011", label: "cache_mgr", grade: "reviewed", score: 0.68, source: "ai", model: "claude-sonnet-4-6", session: "sess-070", timestamp: "2025-05-18", reviewer: "박검토", warnings: [{type:"info", msg:"GCA 서명 확인됨"},{type:"info", msg:"검토 이력 1건"}] },
+    { id: "block-012", label: "session_mgr", grade: "risky", score: 0.28, source: "ai", model: "gpt-4o", session: "sess-061", timestamp: "2025-05-15", reviewer: null, warnings: [{type:"danger", msg:"인증 우회 패턴 의심"},{type:"danger", msg:"검토 이력 없음 (21일 경과)"},{type:"warning", msg:"block-004와 동일 세션 생성"}] },
+  ],
+  links: [
+    { source: "block-001", target: "block-002", type: "derives" },
+    { source: "block-001", target: "block-003", type: "derives" },
+    { source: "block-003", target: "block-004", type: "depends" },
+    { source: "block-004", target: "block-005", type: "propagates" },
+    { source: "block-004", target: "block-006", type: "propagates" },
+    { source: "block-006", target: "block-007", type: "propagates" },
+    { source: "block-008", target: "block-001", type: "depends" },
+    { source: "block-009", target: "block-001", type: "depends" },
+    { source: "block-002", target: "block-010", type: "depends" },
+    { source: "block-010", target: "block-011", type: "derives" },
+    { source: "block-011", target: "block-005", type: "depends" },
+    { source: "block-001", target: "block-012", type: "derives" },
+    { source: "block-004", target: "block-012", type: "propagates" },
+  ]
+};
+
+const gradeColor = {
+  trusted: "#00d4a0",
+  reviewed: "#3b9eff",
+  unverified: "#f5a623",
+  risky: "#ff4d6d"
+};
+
+const gradeLabel = {
+  trusted: "TRUSTED",
+  reviewed: "REVIEWED",
+  unverified: "UNVERIFIED",
+  risky: "RISKY"
+};
+
+// 통계 업데이트
+function updateStats() {
+  const counts = { trusted: 0, reviewed: 0, unverified: 0, risky: 0, ai: 0, human: 0 };
+  graphData.nodes.forEach(n => {
+    counts[n.grade]++;
+    counts[n.source]++;
+  });
+  document.getElementById('stat-trusted').textContent = counts.trusted;
+  document.getElementById('stat-reviewed').textContent = counts.reviewed;
+  document.getElementById('stat-unverified').textContent = counts.unverified;
+  document.getElementById('stat-risky').textContent = counts.risky;
+  document.getElementById('lc-trusted').textContent = counts.trusted;
+  document.getElementById('lc-reviewed').textContent = counts.reviewed;
+  document.getElementById('lc-unverified').textContent = counts.unverified;
+  document.getElementById('lc-risky').textContent = counts.risky;
+  document.getElementById('lc-ai').textContent = counts.ai;
+  document.getElementById('lc-human').textContent = counts.human;
+}
+
+updateStats();
+
+// 경고 바 시간
+document.getElementById('alert-time').textContent = new Date().toLocaleTimeString('ko-KR');
+
+// ── D3 그래프 ──
+const svg = d3.select("#graph-svg");
+const container = svg.append("g").attr("class", "container");
+
+// 줌
+const zoom = d3.zoom()
+  .scaleExtent([0.3, 3])
+  .on("zoom", e => container.attr("transform", e.transform));
+svg.call(zoom);
+
+// 화살표 마커
+const defs = svg.append("defs");
+
+["derives", "depends", "propagates"].forEach(type => {
+  const color = type === "propagates" ? "#ff4d6d" : type === "derives" ? "#00d4a0" : "#64748b";
+  defs.append("marker")
+    .attr("id", `arrow-${type}`)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 22)
+    .attr("refY", 0)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M0,-5L10,0L0,5")
+    .attr("class", "link-arrow")
+    .attr("fill", color);
+});
+
+// 시뮬레이션
+let simulation;
+let linkSel, nodeSel;
+let currentFilter = "all";
+let selectedNode = null;
+
+function buildGraph(filter) {
+  container.selectAll("*").remove();
+
+  let nodes = graphData.nodes.map(d => ({ ...d }));
+  let links = graphData.links.map(d => ({ ...d }));
+
+  if (filter === "risky") {
+    const riskyIds = new Set(nodes.filter(n => n.grade === "risky").map(n => n.id));
+    // 위험 전파 링크 포함
+    links.filter(l => l.type === "propagates").forEach(l => {
+      riskyIds.add(l.target);
+      riskyIds.add(l.source);
+    });
+    nodes = nodes.filter(n => riskyIds.has(n.id));
+    links = links.filter(l => riskyIds.has(l.source) && riskyIds.has(l.target));
+  } else if (filter === "ai") {
+    const aiIds = new Set(nodes.filter(n => n.source === "ai").map(n => n.id));
+    nodes = nodes.filter(n => aiIds.has(n.id));
+    links = links.filter(l => aiIds.has(l.source) && aiIds.has(l.target));
+  } else if (["trusted","reviewed","unverified"].includes(filter)) {
+    const ids = new Set(nodes.filter(n => n.grade === filter).map(n => n.id));
+    nodes = nodes.filter(n => ids.has(n.id));
+    links = links.filter(l => ids.has(l.source) && ids.has(l.target));
+  }
+
+  const nodeMap = new Map(nodes.map(n => [n.id, n]));
+  const validLinks = links.filter(l => nodeMap.has(l.source) && nodeMap.has(l.target));
+
+  const w = document.querySelector('.graph-area').offsetWidth;
+  const h = document.querySelector('.graph-area').offsetHeight;
+
+  // 링크
+  linkSel = container.append("g").selectAll("line")
+    .data(validLinks)
+    .join("line")
+    .attr("class", "link")
+    .attr("stroke", d => d.type === "propagates" ? "#ff4d6d" : d.type === "derives" ? "#00d4a0" : "#1e2d45")
+    .attr("stroke-width", d => d.type === "propagates" ? 2 : 1.5)
+    .attr("stroke-dasharray", d => d.type === "depends" ? "4,3" : null)
+    .attr("marker-end", d => `url(#arrow-${d.type})`);
+
+  // 노드 그룹
+  nodeSel = container.append("g").selectAll(".node")
+    .data(nodes)
+    .join("g")
+    .attr("class", "node")
+    .attr("id", d => `node-${d.id}`)
+    .call(d3.drag()
+      .on("start", dragstart)
+      .on("drag", dragged)
+      .on("end", dragend))
+    .on("click", (e, d) => {
+      e.stopPropagation();
+      selectNode(d);
+    })
+    .on("mouseover", (e, d) => showTooltip(e, d))
+    .on("mousemove", moveTooltip)
+    .on("mouseout", hideTooltip);
+
+  // 원
+  nodeSel.append("circle")
+    .attr("r", d => d.grade === "risky" ? 22 : d.grade === "trusted" ? 20 : 18)
+    .attr("fill", d => d.source === "human" ? "#a78bfa22" : `${gradeColor[d.grade]}22`)
+    .attr("stroke", d => d.source === "human" ? "#a78bfa" : gradeColor[d.grade])
+    .attr("stroke-width", d => d.grade === "risky" ? 2.5 : 1.5);
+
+  // AI 배지 (점)
+  nodeSel.filter(d => d.source === "ai").append("circle")
+    .attr("r", 4)
+    .attr("cx", 14).attr("cy", -14)
+    .attr("fill", d => gradeColor[d.grade])
+    .attr("stroke", "#080c14")
+    .attr("stroke-width", 1.5);
+
+  // 라벨
+  nodeSel.append("text")
+    .attr("dy", "0.35em")
+    .attr("class", "node-label")
+    .text(d => d.label)
+    .style("font-size", "9px")
+    .style("font-family", "'JetBrains Mono', monospace")
+    .style("fill", d => gradeColor[d.grade]);
+
+  nodeSel.append("text")
+    .attr("dy", "1.6em")
+    .attr("class", "node-id")
+    .text(d => d.id.replace("block-", "#"))
+    .style("font-size", "8px")
+    .style("fill", "#64748b");
+
+  // RISKY 노드 경고 링
+  nodeSel.filter(d => d.grade === "risky").append("circle")
+    .attr("r", 28)
+    .attr("fill", "none")
+    .attr("stroke", "#ff4d6d")
+    .attr("stroke-width", 1)
+    .attr("stroke-dasharray", "4,4")
+    .attr("opacity", 0.5);
+
+  // 시뮬레이션
+  if (simulation) simulation.stop();
+
+  simulation = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(validLinks).id(d => d.id).distance(100).strength(0.5))
+    .force("charge", d3.forceManyBody().strength(-320))
+    .force("center", d3.forceCenter(w / 2, h / 2))
+    .force("collision", d3.forceCollide(40))
+    .on("tick", () => {
+      linkSel
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+      nodeSel.attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+}
+
+// 드래그
+function dragstart(e, d) {
+  if (!e.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x; d.fy = d.y;
+}
+function dragged(e, d) { d.fx = e.x; d.fy = e.y; }
+function dragend(e, d) {
+  if (!e.active) simulation.alphaTarget(0);
+  d.fx = null; d.fy = null;
+}
+
+// 노드 선택
+function selectNode(d) {
+  d3.selectAll(".node").classed("selected", false);
+  d3.select(`#node-${d.id}`).classed("selected", true);
+  selectedNode = d;
+  renderDetail(d);
+}
+
+svg.on("click", () => {
+  d3.selectAll(".node").classed("selected", false);
+  selectedNode = null;
+  document.getElementById('detail-panel').innerHTML = '<div class="detail-empty">노드를 클릭하면<br>상세 정보가 표시됩니다</div>';
+});
+
+// 상세 패널
+function renderDetail(d) {
+  const color = gradeColor[d.grade];
+  const bgColor = `${color}20`;
+
+  let warningsHtml = '';
+  if (d.warnings) {
+    warningsHtml = `<div class="warning-list">`;
+    d.warnings.forEach(w => {
+      warningsHtml += `<div class="warning-item warn-${w.type}">${w.type === 'danger' ? '⚠' : w.type === 'warning' ? '△' : 'ℹ'} ${w.msg}</div>`;
+    });
+    warningsHtml += `</div>`;
+  }
+
+  document.getElementById('detail-panel').innerHTML = `
+    <div class="detail-block-id">${d.id}</div>
+    <div class="detail-score" style="color:${color}">${d.score.toFixed(2)}</div>
+    <div class="detail-grade" style="background:${bgColor}; color:${color}">${gradeLabel[d.grade]}</div>
+
+    <div class="detail-row">
+      <span class="detail-key">label</span>
+      <span class="detail-val">${d.label}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">source</span>
+      <span class="detail-val" style="color:${d.source === 'human' ? '#a78bfa' : color}">${d.source === 'ai' ? 'AI 생성 (GCA)' : 'Human 작성'}</span>
+    </div>
+    ${d.model ? `<div class="detail-row"><span class="detail-key">model</span><span class="detail-val">${d.model}</span></div>` : ''}
+    ${d.session ? `<div class="detail-row"><span class="detail-key">session</span><span class="detail-val">${d.session}</span></div>` : ''}
+    <div class="detail-row">
+      <span class="detail-key">timestamp</span>
+      <span class="detail-val">${d.timestamp}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-key">reviewer</span>
+      <span class="detail-val" style="color:${d.reviewer ? '#00d4a0' : '#ff4d6d'}">${d.reviewer || '없음'}</span>
+    </div>
+    ${warningsHtml}
+  `;
+}
+
+// 툴팁
+const tooltip = document.getElementById('tooltip');
+function showTooltip(e, d) {
+  const color = gradeColor[d.grade];
+  tooltip.innerHTML = `
+    <div class="tooltip-title" style="color:${color}">${d.label}</div>
+    <div class="tooltip-row"><span>등급</span><span style="color:${color}">${gradeLabel[d.grade]}</span></div>
+    <div class="tooltip-row"><span>점수</span><span>${d.score.toFixed(2)}</span></div>
+    <div class="tooltip-row"><span>출처</span><span>${d.source === 'ai' ? 'AI (GCA)' : 'Human'}</span></div>
+    ${d.model ? `<div class="tooltip-row"><span>모델</span><span>${d.model}</span></div>` : ''}
+  `;
+  tooltip.classList.add('visible');
+  moveTooltip(e);
+}
+function moveTooltip(e) {
+  const rect = document.querySelector('.graph-area').getBoundingClientRect();
+  let x = e.clientX - rect.left + 16;
+  let y = e.clientY - rect.top + 16;
+  if (x + 200 > rect.width) x -= 220;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+function hideTooltip() { tooltip.classList.remove('visible'); }
+
+// 필터
+function filterNodes(type) {
+  currentFilter = type;
+  ['all','risky','ai'].forEach(id => {
+    const el = document.getElementById(`btn-${id}`);
+    if (el) el.classList.toggle('active', id === type);
+  });
+  buildGraph(type);
+}
+
+// 초기 렌더
+buildGraph("all");
+
+// 줌 컨트롤
+function zoomIn() { svg.transition().call(zoom.scaleBy, 1.3); }
+function zoomOut() { svg.transition().call(zoom.scaleBy, 0.77); }
+function zoomFit() { svg.transition().call(zoom.transform, d3.zoomIdentity); }
+function resetSimulation() { buildGraph(currentFilter); }
+
+window.filterNodes = filterNodes;
+window.resetSimulation = resetSimulation;
+window.zoomIn = zoomIn;
+window.zoomOut = zoomOut;
+window.zoomFit = zoomFit;
+</script>
+</body>
+</html>
