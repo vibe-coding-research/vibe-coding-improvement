@@ -78,7 +78,7 @@ RISKY 블록에서 발생한 취약점은 빨간 실선을 따라 의존 블록 
 
 ### 2. GCA 서명 시뮬레이터
 
-![GCA 서명 시뮬레이터 데모](./Demo_image.GCA_서명_시뮬레이터)
+![GCA 서명 시뮬레이터 데모](./Demo_image/GCA_서명_시뮬레이터.png)
 
 AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 체험하는 도구다. 코드와 모델, 세션 ID, 프롬프트를 입력하면 실제 SHA-256 및 HMAC-SHA256 연산을 통해 `block_id`, `prompt_hash`, `attestation_sig`가 실시간으로 생성된다.
 
