@@ -44,6 +44,8 @@
 
 본 프로젝트는 이 문제를 해결하기 위해 **코드의 출생부터 전파까지 전 과정을 추적하는 계보 기반 신뢰 시스템**을 설계·제안한다.
 
+![loading](https://github.com/vibe-coding-research/vibe-coding-improvement/blob/main/%EA%B3%84%EB%B3%B4%EA%B7%B8%EB%9E%98%ED%94%84.gif?raw=true)
+
 | 핵심 요소 | 내용 |
 |---|---|
 | **생성 맥락 서명 (GCA)** | AI가 코드를 생성하는 순간, 모델 정보·프롬프트 해시·생성 시각을 암호학적으로 코드에 결합하여 기록 |
