@@ -1,162 +1,148 @@
-# 이 코드, 어디서 왔니? — AI 생성 코드의 계보 기반 신뢰 추적
+<div align="center">
 
-> AI가 만든 코드에 출생 증명서를 붙여, 어디서 왔고 믿을 수 있는지 추적하는 시스템 설계 · 바이브 코딩 AI 개선 아이디어 공모전 출품작
+# 이 코드, 어디서 왔니?
 
-**[▶ 소개 페이지와 데모 바로 보기](https://vibe-coding-research.github.io/vibe-coding-improvement/)**
+**AI 생성 코드의 계보 기반 신뢰 추적 시스템**<br>
+AI가 만든 코드에 출생 증명서를 붙여, 어디서 왔고 믿을 수 있는지 추적합니다.
 
-| 데모 | 바로 열기 |
-|---|---|
-| GCA 서명 시뮬레이터 | [열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Gca_simulator.html) |
-| 계보 그래프 | [열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Lineage_graph.html) |
-| 신뢰 점수 계산기 | [열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Trust_score_calculator.html) |
+[![소개 페이지](https://img.shields.io/badge/%EC%86%8C%EA%B0%9C_%ED%8E%98%EC%9D%B4%EC%A7%80-%EC%97%B4%EA%B8%B0-16283C?style=for-the-badge)](https://vibe-coding-research.github.io/vibe-coding-improvement/)
+[![서명 시뮬레이터](https://img.shields.io/badge/%EC%84%9C%EB%AA%85_%EC%8B%9C%EB%AE%AC%EB%A0%88%EC%9D%B4%ED%84%B0-%EC%8B%A4%ED%96%89-34C38F?style=for-the-badge)](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Gca_simulator.html)
+[![계보 그래프](https://img.shields.io/badge/%EA%B3%84%EB%B3%B4_%EA%B7%B8%EB%9E%98%ED%94%84-%EC%8B%A4%ED%96%89-5B9BF0?style=for-the-badge)](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Lineage_graph.html)
+[![신뢰 점수 계산기](https://img.shields.io/badge/%EC%8B%A0%EB%A2%B0_%EC%A0%90%EC%88%98_%EA%B3%84%EC%82%B0%EA%B8%B0-%EC%8B%A4%ED%96%89-E5A43B?style=for-the-badge)](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Trust_score_calculator.html)
 
-발표 자료: [이 코드, 어디서 왔니? (PDF)](./Documents/이%20코드_%20어디서%20왔니.pdf)
+<a href="https://vibe-coding-research.github.io/vibe-coding-improvement/"><img src="Demo_image/landing.png" alt="소개 페이지 첫 화면: 제목과 직접 고쳐 볼 수 있는 코드 출생 증명서" width="900"></a>
 
+바이브 코딩 AI 개선 아이디어 공모전 출품작 · 팀 제일코딩 · 2026
 
-## 참여자
+</div>
 
-| 이름 | GitHub |
-|---|---|
-| <img src="https://github.com/FAITRUEE.png" width="80"> | [LEE SEONGJIN](https://github.com/FAITRUEE) |
-| <img src="https://github.com/ryu2293.png" width="80"> | [Seungrae Ryu](https://github.com/ryu2293) |
+<br>
 
-(2인 팀 / 공동 기획 및 설계)
-
----
-
-## 대회 개요
-
-### 대회 소개
-
-본 대회는 **바이브 코딩(Vibe Coding)** 개발 환경에서 발생하는 한계에 대한 개선을 주제로 한 **설계·기획 중심 아이디어 공모전**입니다.
-
-참가자는 실제 개발 및 운영 과정에서 나타나는 **품질, 안정성, 보안, 유지보수** 측면의 문제를 바탕으로 기술·프로세스·운영·검증 등 다양한 관점에서 **현실적인 개선 아이디어**를 제안합니다.
-
-본 대회는 구현이나 코딩을 요구하지 않으며, **구현 이전 단계의 설계적 사고와 문제 인식 능력**을 중점적으로 평가합니다.
-
----
-
-### 대회 목적
-
-- 바이브 코딩 환경의 **구조적 한계에 대한 이해 및 문제 인식 역량 강화**
-- 품질·안정성·보안·유지보수 이슈에 대한 **개선 아이디어 발굴**
-- 구현 중심이 아닌 **설계·기획 중심의 사고를 통한 AI 활용 관점 확장**
-- 참가자 간 아이디어 공유를 통한 **기술 트렌드 인식 및 네트워킹 기회 제공**
-
----
-
-## 프로젝트 개요
-
-### 핵심 질문
+## 한눈에 보기
 
 > **"이 코드는 어디서 왔는가? 왜 이렇게 작성되었는가? 그리고 이 코드를 신뢰할 수 있는가?"**
 
-바이브 코딩은 개발 속도를 비약적으로 높였지만, 그 이면에서 코드의 출처와 맥락이 사라지는 문제가 심화되고 있다. AI가 생성한 코드는 실행은 되지만, **왜 그렇게 만들어졌는지, 어떤 위험이 내재되어 있는지, 누가 검토했는지**에 대한 기록이 전혀 남지 않는다.
+AI가 만든 코드는 실행은 되지만, 누가 어떤 의도로 만들었고 누가 검토했는지는 남지 않습니다. Git은 *무엇이* 바뀌었는지는 남기지만 *어떤 의도였고 AI와 사람 중 누가 판단했는지*는 남기지 않습니다.
 
-### 제안 아이디어: AI 생성 코드의 계보 기반 신뢰 추적 시스템
+이 프로젝트는 코드가 **태어나는 순간 서명을 남기고**, 수정·전파되는 **계보를 추적하고**, 배포 전에 **근거가 보이는 신뢰 점수**로 판정하는 시스템을 설계했습니다. 설계·기획 중심 공모전이지만, 핵심 개념은 브라우저에서 바로 돌아가는 데모 3종으로 만들었습니다.
 
-본 프로젝트는 이 문제를 해결하기 위해 **코드의 출생부터 전파까지 전 과정을 추적하는 계보 기반 신뢰 시스템**을 설계·제안한다.
+| 관점 | 아이디어 | 해결하는 문제 | 핵심 기술 |
+|---|---|---|---|
+| 기술 | **생성 맥락 서명 (GCA)** | AI 코드의 출처를 알 수 없음 | AST 정규화 + HMAC 서명 |
+| 프로세스 | **세션 단위 계보 추적** | 프롬프트와 코드의 인과관계가 사라짐 | 세션 그래프 모델링 |
+| 운영 | **위험 전파 경로 분석** | 취약점이 조용히 퍼짐 | DAG 기반 위험 전파 |
+| 검증 | **설명 가능한 신뢰 점수** | 실행 성공을 품질 보증으로 착각 | 다차원 신뢰 스코어링 |
 
-| 핵심 요소 | 내용 |
-|---|---|
-| **생성 맥락 서명 (GCA)** | AI가 코드를 생성하는 순간, 모델 정보·프롬프트 해시·생성 시각을 암호학적으로 코드에 결합하여 기록 |
-| **세션 단위 계보 추적** | 바이브 코딩 세션을 추적 단위로 정의하고, 코드 블록의 생성·수정·전파 과정을 그래프로 시각화 |
-| **위험 전파 경로 분석** | 취약점 발견 시 의존 블록 전체로 위험이 어떻게 전파되는지 자동 분석 |
-| **설명 가능한 신뢰 점수** | 숫자 하나가 아닌, 생성 맥락·검토 이력·전파 위험을 결합한 신뢰 컨텍스트 제공 |
+### 시스템 구조 (제안)
 
-기존 정적 분석 도구와 Git이 코드의 **현재 상태(Snapshot)** 만을 진단하는 것과 달리, 본 시스템은 코드의 **생애 주기(Lineage)** 전체를 추적하여 바이브 코딩 특유의 블랙박스 문제를 해결한다.
+<img src="Demo_image/architecture.png" alt="제안 시스템 구조: IDE의 GCA Injector → AST Parser·Lineage DB·Risk Propagator·Trust Scorer → PR 게이트와 장애 대응" width="900">
 
----
+<br>
 
-## 시스템 데모
+## 데모 — 코드가 태어나서 판정받기까지
 
-### 1. 계보 그래프 시각화  ·  [데모 열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Lineage_graph.html)
+설치 없이 브라우저에서 바로 열립니다. 이미지를 누르면 데모가 실행됩니다.
 
-![계보 그래프 시각화 데모](./Demo_image/계보그래프.gif)
+### 1. 생성 순간 — GCA 서명 시뮬레이터
 
-계보 그래프는 코드 블록의 생성부터 전파까지 전 과정을 노드와 엣지로 표현한 방향성 비순환 그래프(DAG)다. 각 노드는 하나의 코드 블록을 의미하며, 색상으로 신뢰 등급을 즉시 파악할 수 있다.
+<a href="https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Gca_simulator.html"><img src="Demo_image/gca_simulator.png" alt="GCA 서명 시뮬레이터: 왼쪽에 코드·요청·모델 입력, 오른쪽에 코드 출생 증명서와 서명 검증 통과" width="900"></a>
 
-| 색상 | 등급 | 의미 |
+AI가 코드를 만드는 순간, **어떤 모델이 어떤 요청으로 언제 만들었는지**를 서명과 함께 기록합니다. 브라우저의 Web Crypto로 실제 SHA-256과 HMAC-SHA256을 계산합니다.
+
+- **코드 블록 지문(block_id)** — 주석·변수 이름·공백을 지운 구조로 계산해, 설명만 고친 코드는 같은 코드로 알아봅니다
+- **요청 지문(prompt_hash)** — 요청 원문은 저장하지 않고 해시만 남겨 내용은 비공개, 검증은 가능
+- **서명(attestation_sig)** — 위 값을 비밀 키로 묶어, 하나라도 바뀌면 서명이 맞지 않습니다
+
+<details>
+<summary><b>버튼 하나로 해 보는 실험 4가지</b> (펼치기)</summary>
+<br>
+
+| 실험 | 확인하는 것 | 결과 |
 |---|---|---|
-| 🟢 초록 | TRUSTED | 서명 검증 + 검토 이력 완비 |
-| 🔵 파랑 | REVIEWED | 검토됐으나 일부 미비 |
-| 🟠 주황 | UNVERIFIED | 검토 이력 부족 |
-| 🔴 빨강 | RISKY | 출처 불명 또는 취약점 전파 중 |
+| 주석만 바꾸기 | 설명만 고친 코드를 같은 코드로 알아보는가 | 코드 블록 지문 그대로 |
+| 로직 바꾸기 | 동작이 바뀐 코드를 새 블록으로 기록하는가 | 지문이 바뀜 |
+| 기록을 몰래 고치기 | 서명 뒤에 모델 이름을 바꿔 치면 잡아내는가 | 서명 불일치 → RISKY |
+| 검토자 넣기 | 사람 검토 기록이 등급에 반영되는가 | UNVERIFIED → REVIEWED |
 
-엣지는 블록 간 관계를 세 가지로 구분한다. **초록 실선**은 특정 블록을 기반으로 새 블록이 파생된 관계, **회색 점선**은 한 블록이 다른 블록의 기능을 의존하는 관계, **빨간 실선**은 취약점이 의존 블록으로 전파되는 위험 경로다.
+<img src="Demo_image/gca_experiments.png" alt="실험 4가지를 모두 해 본 화면: 위변조를 잡아 RISKY로 판정" width="900">
 
-RISKY 블록에서 발생한 취약점은 빨간 실선을 따라 의존 블록 전체로 전파되며, 전파 위험 점수는 거리에 따라 0.7배씩 감쇠한다. 노드를 클릭하면 GCA 서명 정보, 생성 세션, 검토 이력, 경고 메시지를 상세하게 확인할 수 있다.
+</details>
 
----
+### 2. 수정·전파 — 계보 그래프
 
-### 2. GCA 서명 시뮬레이터  ·  [데모 열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Gca_simulator.html)
+<a href="https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Lineage_graph.html"><img src="Demo_image/lineage_graph.png" alt="계보 그래프: 코드 블록이 노드로, 파생·의존·위험 전파가 선으로 이어지고 왼쪽에 선택한 블록의 상세 정보" width="900"></a>
 
-![GCA 서명 시뮬레이터 데모](./Demo_image/GCA_서명_시뮬레이터.png)
+코드 블록의 생성부터 전파까지를 방향성 비순환 그래프(DAG)로 그립니다. 노드를 누르면 서명 정보·생성 세션·검토 이력·경고가 열립니다.
 
-AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 체험하는 도구다. 코드와 모델, 세션 ID, 프롬프트를 입력하면 실제 SHA-256 및 HMAC-SHA256 연산을 통해 `block_id`, `prompt_hash`, `attestation_sig`가 실시간으로 생성된다.
+| 색 | 등급 | 뜻 |
+|---|---|---|
+| 🟢 | TRUSTED | 서명 검증 + 검토 이력 완비 |
+| 🔵 | REVIEWED | 검토됐으나 일부 미비 |
+| 🟠 | UNVERIFIED | 검토 이력 부족 |
+| 🔴 | RISKY | 출처 불명 또는 취약점 전파 중 |
 
-프롬프트 원문은 저장하지 않고 해시값만 기록하여 내용은 비공개로 유지하면서도 사후 검증이 가능하다. 모델을 `unknown`으로 선택하면 서명 없이 UNVERIFIED로 분류되는 동작을 직접 확인할 수 있다.
+선은 세 종류입니다 — **초록 실선** 파생(이 블록을 바탕으로 새 블록이 생김), **회색 점선** 의존, **빨간 실선** 위험 전파. 취약점은 빨간 선을 따라 퍼지고, 한 단계 멀어질 때마다 위험이 0.7배로 줄어듭니다.
 
----
+### 3. 배포 전 — 신뢰 점수 계산기
 
-### 3. 신뢰 점수 계산기  ·  [데모 열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Trust_score_calculator.html)
+<a href="https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Trust_score_calculator.html"><img src="Demo_image/trust_score.png" alt="신뢰 점수 계산기: 점수 0.51 UNVERIFIED, 오른쪽에 계산식과 요소별 기여도" width="900"></a>
 
-![신뢰 점수 계산기 데모](./Demo_image/신뢰점수계산기.gif)
+네 요소를 슬라이더로 움직이면 점수와 등급이 바로 바뀝니다. 숫자 하나가 아니라 **어떤 요소 때문에 그 점수인지**를 계산식과 기여도로 함께 보여 줍니다.
 
-네 가지 요소를 슬라이더로 조절하면 신뢰 점수와 등급이 실시간으로 바뀌는 인터랙티브 계산기다. GCA 서명 유효성(25%), 모델 신뢰 등급(25%), 사람 검토 이력(30%), 전파 위험도(20%)를 직접 조작하며 점수 산정 로직을 체험할 수 있다.
+```
+신뢰 점수 = 0.25 × 서명 유효성 + 0.25 × 모델 신뢰 등급 + 0.30 × 사람 검토 이력 + 0.20 × (1 − 전파 위험도)
+TRUSTED ≥ 0.80 · REVIEWED 0.60~0.79 · UNVERIFIED 0.40~0.59 · RISKY < 0.40
+```
 
-검토 이력의 가중치가 30%로 가장 높은 것은 설계 의도를 반영한 것이다. AI가 생성했더라도 사람이 충분히 검토한 코드는 높은 신뢰를 받을 수 있으며, 반대로 아무리 안전한 모델이 만든 코드라도 미검토 상태면 RISKY로 분류된다.
+사람 검토 이력의 가중치(30%)가 가장 큽니다. 검토 이력이 없으면 나머지가 모두 만점이어도 0.70이라 **TRUSTED가 될 수 없습니다** — AI가 만든 코드의 신뢰는 결국 사람의 검토에서 나온다는 설계 의도입니다.
 
----
+<br>
 
-## 협업 방식
+## 기획 문서
 
-- GitHub Organization 기반 협업
-- 문서 중심 설계 및 아이디어 정리
+문제 정의부터 한계까지, 순서대로 읽으면 설계의 이유가 이어집니다.
 
----
+| | 문서 | 내용 |
+|---|---|---|
+| 1 | [문제 정의](./Documents/1-problem-definition.md) | 바이브 코딩이 만드는 세 가지 단절 — 이해·검증·이력 |
+| 2 | [원인 분석](./Documents/2-root-cause-analysis.md) | 생산 속도와 검증 속도의 비대칭, 기존 도구가 Snapshot만 보는 한계 |
+| 3 | [핵심 아이디어](./Documents/3-core-improvement-idea.md) | GCA 서명 · 세션 계보 · 위험 전파 · 신뢰 점수의 상세 설계 |
+| 4 | [적용 시나리오와 기대 효과](./Documents/4-application-scenario-and-effect.md) | IDE·PR·장애 대응에서 쓰이는 방식 |
+| 5 | [한계와 확장](./Documents/5-limitations-and-extension.md) | 레거시 코드 미서명, AST 추적의 한계와 대응 |
 
-## 문서 구성
+📄 발표 자료: [이 코드, 어디서 왔니? (PDF)](./Documents/이%20코드_%20어디서%20왔니.pdf)
 
-본 아이디어 제안은 다음 5개의 문서로 구성되어 있다.
+<br>
 
-1. **문제 정의**
-   바이브 코딩 환경에서 발생하는 문제와 품질·안정성·보안·유지보수 측면의 이슈를 정의한다.
-   👉 [`1-problem-definition.md`](./Documents/1-problem-definition.md)
+## 저장소 구성
 
-2. **문제의 원인 분석**
-   문제 발생의 근본 원인과 개선 필요성을 분석한다.
-   👉 [`2-root-cause-analysis.md`](./Documents/2-root-cause-analysis.md)
+```
+├── index.html                 소개 페이지 (GitHub Pages)
+├── Demo_code/
+│   ├── Gca_simulator.html     1. 생성 순간 — 서명 시뮬레이터
+│   ├── Lineage_graph.html     2. 수정·전파 — 계보 그래프 (D3.js)
+│   └── Trust_score_calculator.html   3. 배포 전 — 신뢰 점수 계산기
+├── Demo_image/                README·소개 페이지용 화면 · 시스템 구조도
+└── Documents/                 기획 문서 5편 + 발표 자료 PDF
+```
 
-3. **개선 아이디어 핵심 제안**
-   설계·프로세스·운영·검증 관점의 핵심 개선 아이디어를 제시한다.
-   👉 [`3-core-improvement-idea.md`](./Documents/3-core-improvement-idea.md)
+<br>
 
-4. **적용 시나리오 및 기대 효과**
-   실제 개발·운영 환경에서의 적용 방식과 기대 효과를 설명한다.
-   👉 [`4-application-scenario-and-effect.md`](./Documents/4-application-scenario-and-effect.md)
+## 참여자
 
-5. **한계 및 확장 가능성**
-   제안 아이디어의 한계점과 향후 확장 방향을 서술한다.
-   👉 [`5-limitations-and-extension.md`](./Documents/5-limitations-and-extension.md)
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/FAITRUEE"><img src="https://github.com/FAITRUEE.png" width="80" alt=""><br><b>LEE SEONGJIN</b></a></td>
+    <td align="center"><a href="https://github.com/ryu2293"><img src="https://github.com/ryu2293.png" width="80" alt=""><br><b>Seungrae Ryu</b></a></td>
+  </tr>
+</table>
 
----
+팀 **제일코딩** · 2인 공동 기획 및 설계 · GitHub Organization 기반 문서 중심 협업
 
-## 기대 효과
+<details>
+<summary>대회 개요</summary>
+<br>
 
-### 개발 현장에서의 변화
+**바이브 코딩 AI 개선 아이디어 공모전**은 바이브 코딩 개발 환경에서 나타나는 품질·안정성·보안·유지보수 문제를 바탕으로, 기술·프로세스·운영·검증 관점의 현실적인 개선 아이디어를 제안하는 **설계·기획 중심** 공모전입니다. 구현이나 코딩을 요구하지 않으며, 구현 이전 단계의 설계적 사고와 문제 인식 능력을 평가합니다.
 
-바이브 코딩 환경에서 가장 큰 문제는 **코드가 쌓일수록 아무도 그 출처와 맥락을 모르게 된다**는 것이다. 본 시스템이 도입되면 다음과 같은 변화가 일어난다.
-
-- **장애 대응**: 수 시간이 걸리던 원인 블록 특정이 계보 역추적으로 30분 이내 해결 가능
-- **보안 강화**: 특정 AI 모델 버전이 반복 생성하는 취약 패턴을 사전에 클러스터링하여 배포 전 차단
-- **책임 구조 확립**: "AI가 짠 코드라서 몰랐다"가 아닌, 검토 이력이 없는 코드를 배포한 사람이 명시적으로 책임을 인식하는 구조적 책임 분배 실현
-- **유지보수 개선**: 수년이 지난 코드도 생성 맥락을 확인할 수 있어, "무서워서 건드리지 못하는 코드"가 "자신 있게 수정할 수 있는 코드"로 전환
-
-### 더 넓은 관점에서의 의미
-
-본 아이디어는 단순한 도구 제안을 넘어, **소프트웨어 개발에서 신뢰의 근거가 어떻게 바뀌어야 하는가**에 대한 제안이다.
-
-AI가 코드를 생산하는 속도와 인간이 검증하는 속도 사이의 간극이 벌어질수록, 기존의 '이해 기반 신뢰'는 작동하지 않는다. 이제 신뢰의 근거는 **이해에서 검증과 추적으로** 이동해야 한다.
-
-> **"코드를 더 빠르게 만드는 도구가 아닌, 코드의 뿌리를 거슬러 올라갈 수 있는 추적 체계가 필요하다."**
+</details>

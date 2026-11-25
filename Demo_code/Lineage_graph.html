@@ -3,24 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Code Lineage Tracker</title>
+<title>계보 그래프 — 이 코드, 어디서 왔니?</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap');
 
   :root {
-    --bg: #080c14;
-    --surface: #0d1420;
-    --surface2: #111827;
-    --border: #1e2d45;
-    --trusted: #00d4a0;
-    --reviewed: #3b9eff;
-    --unverified: #f5a623;
-    --risky: #ff4d6d;
-    --human: #a78bfa;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --accent: #00d4a0;
+    --bg: #0F1C2B; --surface: #16283C; --surface2: #1C3047; --border: #2A4560;
+    --trusted: #34C38F; --reviewed: #5B9BF0; --unverified: #E5A43B; --risky: #F0637C;
+    --human: #A08CEB; --text: #E6EDF5; --muted: #A9BACB; --accent: #E6EDF5;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,7 +20,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Syne', sans-serif;
+    font-family: 'Pretendard Variable',Pretendard,system-ui,sans-serif;
     height: 100vh;
     overflow: hidden;
     display: flex;
@@ -54,14 +46,14 @@
 
   .logo-icon {
     width: 32px; height: 32px;
-    background: linear-gradient(135deg, var(--trusted), #0066cc);
+    background: var(--text); color: var(--bg);
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     font-size: 16px;
   }
 
   .logo-text { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
-  .logo-sub { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+  .logo-sub { font-size: 14px; color: var(--muted); font-family: 'IBM Plex Mono','Pretendard Variable',monospace; margin-top: 1px; }
 
   .header-stats {
     display: flex;
@@ -75,15 +67,15 @@
   .stat-val {
     font-size: 20px;
     font-weight: 800;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
     line-height: 1;
   }
 
   .stat-label {
-    font-size: 10px;
+    font-size: 13px;
     color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    
+    
     margin-top: 3px;
   }
 
@@ -98,14 +90,14 @@
     border: 1px solid var(--border);
     background: transparent;
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+    font-size: 16px;
     cursor: pointer;
     transition: all 0.15s;
   }
 
   .btn:hover { border-color: var(--accent); color: var(--accent); }
-  .btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; }
 
   /* ── 레이아웃 ── */
   .main {
@@ -116,7 +108,7 @@
 
   /* ── 사이드바 ── */
   .sidebar {
-    width: 260px;
+    width: 310px;
     border-right: 1px solid var(--border);
     background: var(--surface);
     display: flex;
@@ -131,12 +123,12 @@
   }
 
   .section-title {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    font-size: 13px;
+    
+    
     color: var(--muted);
     margin-bottom: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   }
 
   .legend-item {
@@ -158,12 +150,12 @@
     flex-shrink: 0;
   }
 
-  .legend-name { font-size: 12px; font-weight: 600; }
+  .legend-name { font-size: 15px; font-weight: 600; }
   .legend-count {
     margin-left: auto;
-    font-size: 11px;
+    font-size: 14px;
     color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   }
 
   /* ── 노드 상세 패널 ── */
@@ -174,15 +166,15 @@
 
   .detail-empty {
     color: var(--muted);
-    font-size: 12px;
+    font-size: 15px;
     text-align: center;
     margin-top: 20px;
     line-height: 1.6;
   }
 
   .detail-block-id {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+    font-size: 14px;
     color: var(--muted);
     margin-bottom: 8px;
   }
@@ -190,16 +182,16 @@
   .detail-score {
     font-size: 36px;
     font-weight: 800;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
     line-height: 1;
     margin-bottom: 4px;
   }
 
   .detail-grade {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    
+    
     padding: 3px 8px;
     border-radius: 4px;
     display: inline-block;
@@ -212,12 +204,12 @@
     align-items: center;
     padding: 7px 0;
     border-bottom: 1px solid var(--border);
-    font-size: 12px;
+    font-size: 15px;
   }
 
   .detail-row:last-child { border-bottom: none; }
-  .detail-key { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 10px; }
-  .detail-val { font-weight: 600; font-size: 11px; text-align: right; max-width: 140px; word-break: break-all; }
+  .detail-key { color: var(--muted); font-family: 'IBM Plex Mono','Pretendard Variable',monospace; font-size: 13px; }
+  .detail-val { font-weight: 600; font-size: 14px; text-align: right; max-width: 190px; word-break: break-all; }
 
   .warning-list { margin-top: 12px; }
 
@@ -228,14 +220,14 @@
     padding: 6px 8px;
     border-radius: 6px;
     margin-bottom: 6px;
-    font-size: 11px;
+    font-size: 14px;
     line-height: 1.5;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   }
 
-  .warn-info { background: rgba(59,158,255,0.12); color: #3b9eff; }
-  .warn-warning { background: rgba(245,166,35,0.12); color: #f5a623; }
-  .warn-danger { background: rgba(255,77,109,0.12); color: #ff4d6d; }
+  .warn-info { background: rgba(91,155,240,0.12); color: #5B9BF0; }
+  .warn-warning { background: rgba(229,164,59,0.12); color: #E5A43B; }
+  .warn-danger { background: rgba(240,99,124,0.12); color: #F0637C; }
 
   /* ── 그래프 영역 ── */
   .graph-area {
@@ -258,15 +250,15 @@
   .node:hover circle { filter: brightness(1.3); }
 
   .node text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+    font-size: 13px;
     fill: var(--text);
     pointer-events: none;
     text-anchor: middle;
   }
 
   .node .node-id {
-    font-size: 9px;
+    font-size: 12px;
     fill: var(--muted);
   }
 
@@ -288,8 +280,8 @@
     border-radius: 8px;
     padding: 10px 14px;
     pointer-events: none;
-    font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
     opacity: 0;
     transition: opacity 0.15s;
     z-index: 100;
@@ -297,7 +289,7 @@
   }
 
   .tooltip.visible { opacity: 1; }
-  .tooltip-title { font-weight: 700; margin-bottom: 6px; font-size: 12px; }
+  .tooltip-title { font-weight: 700; margin-bottom: 6px; font-size: 15px; }
   .tooltip-row { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); margin-top: 3px; }
   .tooltip-row span:last-child { color: var(--text); }
 
@@ -326,14 +318,14 @@
 
   /* ── 하단 경고 바 ── */
   .alert-bar {
-    background: rgba(255,77,109,0.1);
-    border-top: 1px solid rgba(255,77,109,0.3);
+    background: rgba(240,99,124,0.1);
+    border-top: 1px solid rgba(240,99,124,0.3);
     padding: 8px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
     flex-shrink: 0;
   }
 
@@ -349,7 +341,7 @@
     50% { opacity: 0.5; transform: scale(0.8); }
   }
 
-  .alert-text { color: #ff4d6d; }
+  .alert-text { color: #F0637C; }
   .alert-muted { color: var(--muted); margin-left: auto; }
 
   /* 선택된 노드 링 */
@@ -357,16 +349,32 @@
     stroke-width: 3px !important;
     filter: brightness(1.4) drop-shadow(0 0 8px currentColor);
   }
+  .back{width:32px;height:32px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text);font-size:16px}
+  .back:hover{background:var(--surface2)}
+  .logo-text{font-size:18px;letter-spacing:-.02em}
+  .logo-sub{font-family:'Pretendard Variable',sans-serif;font-size:15.5px}
+  .stat-label{font-size:14px;font-weight:600}
+  .section-title{font-family:'Pretendard Variable',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+  .legend-name{font-size:16px}
+  .detail-empty{font-size:16.5px}
+  .detail-key{font-size:14.5px}
+  .detail-val{font-size:15.5px}
+  .warning-item{font-family:'Pretendard Variable',sans-serif;font-size:15.5px}
+  .graph-area{background-color:#122335;background-image:radial-gradient(#1F3650 1px,transparent 1px);background-size:22px 22px}
+  .node text{font-size:14px;font-weight:500}
+  .node.selected circle{filter:drop-shadow(0 0 6px currentColor)}
+  .alert-bar{font-family:'Pretendard Variable',sans-serif;font-size:16px}
+  .tooltip{box-shadow:0 8px 24px -12px rgba(20,32,51,.35)}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <div class="logo-icon">⬡</div>
+    <a class="back" href="../index.html" title="소개 페이지로">←</a>
     <div>
-      <div class="logo-text">Code Lineage Tracker</div>
-      <div class="logo-sub">AI 생성 코드 계보 기반 신뢰 추적 시스템</div>
+      <div class="logo-text">계보 그래프</div>
+      <div class="logo-sub">데모 2 / 3 · 노드를 누르면 서명·검토 이력이 열립니다</div>
     </div>
   </div>
 
@@ -500,10 +508,10 @@ const graphData = {
 };
 
 const gradeColor = {
-  trusted: "#00d4a0",
-  reviewed: "#3b9eff",
-  unverified: "#f5a623",
-  risky: "#ff4d6d"
+  trusted: "#34C38F",
+  reviewed: "#5B9BF0",
+  unverified: "#E5A43B",
+  risky: "#F0637C"
 };
 
 const gradeLabel = {
@@ -551,7 +559,7 @@ svg.call(zoom);
 const defs = svg.append("defs");
 
 ["derives", "depends", "propagates"].forEach(type => {
-  const color = type === "propagates" ? "#ff4d6d" : type === "derives" ? "#00d4a0" : "#64748b";
+  const color = type === "propagates" ? "#F0637C" : type === "derives" ? "#34C38F" : "#A9BACB";
   defs.append("marker")
     .attr("id", `arrow-${type}`)
     .attr("viewBox", "0 -5 10 10")
@@ -608,7 +616,7 @@ function buildGraph(filter) {
     .data(validLinks)
     .join("line")
     .attr("class", "link")
-    .attr("stroke", d => d.type === "propagates" ? "#ff4d6d" : d.type === "derives" ? "#00d4a0" : "#1e2d45")
+    .attr("stroke", d => d.type === "propagates" ? "#F0637C" : d.type === "derives" ? "#34C38F" : "#3D5A78")
     .attr("stroke-width", d => d.type === "propagates" ? 2 : 1.5)
     .attr("stroke-dasharray", d => d.type === "depends" ? "4,3" : null)
     .attr("marker-end", d => `url(#arrow-${d.type})`);
@@ -634,8 +642,8 @@ function buildGraph(filter) {
   // 원
   nodeSel.append("circle")
     .attr("r", d => d.grade === "risky" ? 22 : d.grade === "trusted" ? 20 : 18)
-    .attr("fill", d => d.source === "human" ? "#a78bfa22" : `${gradeColor[d.grade]}22`)
-    .attr("stroke", d => d.source === "human" ? "#a78bfa" : gradeColor[d.grade])
+    .attr("fill", d => d.source === "human" ? "#A08CEB22" : `${gradeColor[d.grade]}22`)
+    .attr("stroke", d => d.source === "human" ? "#A08CEB" : gradeColor[d.grade])
     .attr("stroke-width", d => d.grade === "risky" ? 2.5 : 1.5);
 
   // AI 배지 (점)
@@ -643,30 +651,37 @@ function buildGraph(filter) {
     .attr("r", 4)
     .attr("cx", 14).attr("cy", -14)
     .attr("fill", d => gradeColor[d.grade])
-    .attr("stroke", "#080c14")
+    .attr("stroke", "#16283C")
     .attr("stroke-width", 1.5);
 
   // 라벨
+  // 번호는 원 안에, 이름은 원 아래에 흰 테두리를 둘러 선 위에서도 읽히게
   nodeSel.append("text")
     .attr("dy", "0.35em")
-    .attr("class", "node-label")
-    .text(d => d.label)
-    .style("font-size", "9px")
-    .style("font-family", "'JetBrains Mono', monospace")
-    .style("fill", d => gradeColor[d.grade]);
-
-  nodeSel.append("text")
-    .attr("dy", "1.6em")
     .attr("class", "node-id")
     .text(d => d.id.replace("block-", "#"))
-    .style("font-size", "8px")
-    .style("fill", "#64748b");
+    .style("font-size", "13px")
+    .style("font-weight", "600")
+    .style("fill", d => d.source === "human" ? "#A08CEB" : gradeColor[d.grade]);
+
+  nodeSel.append("text")
+    .attr("dy", d => (d.grade === "risky" ? 22 : d.grade === "trusted" ? 20 : 18) + 16)
+    .attr("class", "node-label")
+    .text(d => d.label)
+    .style("font-size", "15px")
+    .style("font-weight", "600")
+    .style("font-family", "'IBM Plex Mono','Pretendard Variable',monospace")
+    .style("fill", "#E6EDF5")
+    .style("paint-order", "stroke")
+    .style("stroke", "#122335")
+    .style("stroke-width", "4px")
+    .style("stroke-linejoin", "round");
 
   // RISKY 노드 경고 링
   nodeSel.filter(d => d.grade === "risky").append("circle")
     .attr("r", 28)
     .attr("fill", "none")
-    .attr("stroke", "#ff4d6d")
+    .attr("stroke", "#F0637C")
     .attr("stroke-width", 1)
     .attr("stroke-dasharray", "4,4")
     .attr("opacity", 0.5);
@@ -739,7 +754,7 @@ function renderDetail(d) {
     </div>
     <div class="detail-row">
       <span class="detail-key">source</span>
-      <span class="detail-val" style="color:${d.source === 'human' ? '#a78bfa' : color}">${d.source === 'ai' ? 'AI 생성 (GCA)' : 'Human 작성'}</span>
+      <span class="detail-val" style="color:${d.source === 'human' ? '#A08CEB' : color}">${d.source === 'ai' ? 'AI 생성 (GCA)' : 'Human 작성'}</span>
     </div>
     ${d.model ? `<div class="detail-row"><span class="detail-key">model</span><span class="detail-val">${d.model}</span></div>` : ''}
     ${d.session ? `<div class="detail-row"><span class="detail-key">session</span><span class="detail-val">${d.session}</span></div>` : ''}
@@ -749,7 +764,7 @@ function renderDetail(d) {
     </div>
     <div class="detail-row">
       <span class="detail-key">reviewer</span>
-      <span class="detail-val" style="color:${d.reviewer ? '#00d4a0' : '#ff4d6d'}">${d.reviewer || '없음'}</span>
+      <span class="detail-val" style="color:${d.reviewer ? '#34C38F' : '#F0637C'}">${d.reviewer || '없음'}</span>
     </div>
     ${warningsHtml}
   `;

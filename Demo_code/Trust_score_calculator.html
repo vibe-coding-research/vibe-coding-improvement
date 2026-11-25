@@ -3,22 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trust Score Calculator</title>
+<title>신뢰 점수 계산기 — 이 코드, 어디서 왔니?</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&display=swap');
 
 :root {
-  --bg: #0e0e14;
-  --surface: #141420;
-  --surface2: #1a1a28;
-  --border: #252535;
-  --trusted: #00d4a0;
-  --reviewed: #3b9eff;
-  --unverified: #f5a623;
-  --risky: #ff4d6d;
-  --text: #e8e8f0;
-  --muted: #6060a0;
-  --accent: #9d7fff;
+  --bg: #0F1C2B; --surface: #16283C; --surface2: #1C3047; --border: #2A4560;
+  --trusted: #34C38F; --reviewed: #5B9BF0; --unverified: #E5A43B; --risky: #F0637C;
+  --text: #E6EDF5; --muted: #A9BACB; --accent: #E6EDF5;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,11 +19,9 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Fraunces', serif;
+  font-family: 'Pretendard Variable',Pretendard,system-ui,sans-serif;
   min-height: 100vh;
   padding: 40px 24px;
-  background-image: radial-gradient(ellipse at 20% 20%, #1a0a3a22 0%, transparent 60%),
-                    radial-gradient(ellipse at 80% 80%, #0a2a1a22 0%, transparent 60%);
 }
 
 .page-header {
@@ -39,10 +30,10 @@ body {
 }
 
 .eyebrow {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+  font-size: 13px;
+  
+  
   color: var(--accent);
   margin-bottom: 14px;
 }
@@ -61,7 +52,7 @@ h1 em { font-style: italic; color: var(--accent); }
 .subtitle {
   font-size: 14px;
   color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   font-weight: 300;
 }
 
@@ -93,7 +84,7 @@ h1 em { font-style: italic; color: var(--accent); }
   transform: translateX(-50%);
   width: 200px; height: 200px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--grade-color, #9d7fff)15 0%, transparent 70%);
+  background: radial-gradient(circle, var(--grade-color, #E6EDF5)15 0%, transparent 70%);
   opacity: 0.15;
   transition: background 0.4s;
 }
@@ -108,11 +99,11 @@ h1 em { font-style: italic; color: var(--accent); }
 }
 
 .score-grade {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  
+  
   margin-top: 8px;
   padding: 6px 16px;
   border-radius: 20px;
@@ -121,10 +112,10 @@ h1 em { font-style: italic; color: var(--accent); }
 }
 
 .score-desc {
-  font-size: 13px;
+  font-size: 16px;
   color: var(--muted);
   margin-top: 12px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   font-weight: 300;
 }
 
@@ -167,26 +158,26 @@ h1 em { font-style: italic; color: var(--accent); }
 }
 
 .slider-name {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
 }
 
 .slider-weight {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   background: var(--surface2);
   padding: 2px 8px;
   border-radius: 4px;
 }
 
 .slider-desc {
-  font-size: 11px;
+  font-size: 14px;
   color: var(--muted);
   margin-bottom: 12px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   line-height: 1.5;
 }
 
@@ -220,7 +211,7 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
 .slider-val {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   font-size: 14px;
   font-weight: 700;
   width: 36px;
@@ -244,25 +235,25 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 }
 
 .card-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+  font-size: 13px;
+  
+  
   color: var(--muted);
   margin-bottom: 14px;
 }
 
 .formula {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: #9d7fff;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+  font-size: 14px;
+  color: #E6EDF5;
   line-height: 1.8;
   background: var(--surface2);
   padding: 14px;
   border-radius: 8px;
 }
 
-.formula .f-key { color: #7ecfff; }
+.formula .f-key { color: #5B9BF0; }
 .formula .f-op { color: var(--muted); }
 .formula .f-result { color: var(--trusted); font-weight: 700; }
 
@@ -288,9 +279,9 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 .grade-row.current { background: var(--surface2); }
 
 .grade-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.grade-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; flex: 1; }
-.grade-range { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-left: auto; }
-.grade-action { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.grade-name { font-family: 'IBM Plex Mono','Pretendard Variable',monospace; font-size: 14px; font-weight: 700; flex: 1; }
+.grade-range { font-family: 'IBM Plex Mono','Pretendard Variable',monospace; font-size: 13px; color: var(--muted); margin-left: auto; }
+.grade-action { font-size: 13px; color: var(--muted); font-family: 'IBM Plex Mono','Pretendard Variable',monospace; }
 
 /* 기여도 바 */
 .contrib-card {
@@ -308,8 +299,8 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 }
 
 .contrib-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+  font-size: 13px;
   color: var(--muted);
   width: 100px;
   flex-shrink: 0;
@@ -330,8 +321,8 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 }
 
 .contrib-pct {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+  font-size: 13px;
   color: var(--text);
   width: 36px;
   text-align: right;
@@ -345,16 +336,16 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 }
 
 .recommend-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 1px;
+  
   margin-bottom: 6px;
 }
 
 .recommend-text {
-  font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-family: 'IBM Plex Mono','Pretendard Variable',monospace;
   line-height: 1.6;
 }
 
@@ -364,13 +355,18 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 }
 
 .score-animate { animation: scoreAnim 0.3s ease; }
+.back{display:inline-block;margin-bottom:18px;font-size:14px;font-weight:600;color:var(--text);text-decoration:none}
+.eyebrow{font-family:'Pretendard Variable',sans-serif;font-size:14px;font-weight:600;color:var(--muted)}
+h1{font-size:44px;font-weight:800;letter-spacing:-.04em}
+.subtitle,.score-desc,.slider-desc,.card-label,.recommend-text,.recommend-title,.preset-btn,button{font-family:'Pretendard Variable',Pretendard,sans-serif!important}
+.subtitle{font-size:16px}.slider-desc{font-size:14.5px}.card-label{font-size:14px;font-weight:700;color:var(--text)}.recommend-text{font-size:15px;line-height:1.6}
 </style>
 </head>
 <body>
 
 <div class="page-header">
-  <div class="eyebrow">Trust Score Engine</div>
-  <h1>신뢰 점수 <em>계산기</em></h1>
+  <a class="back" href="../index.html">← 소개 페이지</a><div class="eyebrow">데모 3 / 3 · 배포 전</div>
+  <h1>신뢰 점수 계산기</h1>
   <p class="subtitle">슬라이더를 조절해 코드 블록의 신뢰 점수를 실시간으로 계산하세요</p>
 </div>
 
@@ -403,9 +399,9 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="slider-val" id="v-attestation">0.50</div>
         </div>
         <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button onclick="setPreset('attestation', 100)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">유효=1.0</button>
-          <button onclick="setPreset('attestation', 20)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--unverified); font-family:'JetBrains Mono',monospace; cursor:pointer;">없음=0.2</button>
-          <button onclick="setPreset('attestation', 0)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">위조=0.0</button>
+          <button onclick="setPreset('attestation', 100)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">유효=1.0</button>
+          <button onclick="setPreset('attestation', 20)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--unverified); font-family:'JetBrains Mono',monospace; cursor:pointer;">없음=0.2</button>
+          <button onclick="setPreset('attestation', 0)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">위조=0.0</button>
         </div>
       </div>
 
@@ -421,9 +417,9 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="slider-val" id="v-model">0.70</div>
         </div>
         <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button onclick="setPreset('model', 90)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">안전 모델</button>
-          <button onclick="setPreset('model', 60)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--reviewed); font-family:'JetBrains Mono',monospace; cursor:pointer;">보통</button>
-          <button onclick="setPreset('model', 20)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">취약 이력 多</button>
+          <button onclick="setPreset('model', 90)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">안전 모델</button>
+          <button onclick="setPreset('model', 60)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--reviewed); font-family:'JetBrains Mono',monospace; cursor:pointer;">보통</button>
+          <button onclick="setPreset('model', 20)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">취약 이력 多</button>
         </div>
       </div>
 
@@ -439,9 +435,9 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="slider-val" id="v-review">0.30</div>
         </div>
         <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button onclick="setPreset('review', 100)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">다수 검토</button>
-          <button onclick="setPreset('review', 50)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--reviewed); font-family:'JetBrains Mono',monospace; cursor:pointer;">1회 검토</button>
-          <button onclick="setPreset('review', 0)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">미검토</button>
+          <button onclick="setPreset('review', 100)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">다수 검토</button>
+          <button onclick="setPreset('review', 50)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--reviewed); font-family:'JetBrains Mono',monospace; cursor:pointer;">1회 검토</button>
+          <button onclick="setPreset('review', 0)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">미검토</button>
         </div>
       </div>
 
@@ -457,9 +453,9 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div class="slider-val" id="v-risk">0.40</div>
         </div>
         <div style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button onclick="setPreset('risk', 0)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">전파 없음</button>
-          <button onclick="setPreset('risk', 49)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--unverified); font-family:'JetBrains Mono',monospace; cursor:pointer;">2단계 전파</button>
-          <button onclick="setPreset('risk', 100)" style="font-size:10px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">직접 연결</button>
+          <button onclick="setPreset('risk', 0)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--trusted); font-family:'JetBrains Mono',monospace; cursor:pointer;">전파 없음</button>
+          <button onclick="setPreset('risk', 49)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--unverified); font-family:'JetBrains Mono',monospace; cursor:pointer;">2단계 전파</button>
+          <button onclick="setPreset('risk', 100)" style="font-size:13px; padding:3px 8px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--risky); font-family:'JetBrains Mono',monospace; cursor:pointer;">직접 연결</button>
         </div>
       </div>
 
@@ -546,10 +542,10 @@ T(b) =<br>
 
 <script>
 const gradeInfo = {
-  trusted:    { color: '#00d4a0', bg: 'rgba(0,212,160,0.1)',   border: 'rgba(0,212,160,0.3)',   label: 'TRUSTED',    desc: '검증된 안전한 코드',           action: '정기 재검토를 권장합니다. 현재 배포 가능한 상태입니다.' },
-  reviewed:   { color: '#3b9eff', bg: 'rgba(59,158,255,0.1)',  border: 'rgba(59,158,255,0.3)',  label: 'REVIEWED',   desc: '검토됐으나 일부 미비',          action: '배포 전 재확인을 권장합니다. 주요 로직을 한 번 더 검토하세요.' },
-  unverified: { color: '#f5a623', bg: 'rgba(245,166,35,0.1)',  border: 'rgba(245,166,35,0.3)',  label: 'UNVERIFIED', desc: '검토 이력 부족',               action: '수동 검토가 필수입니다. 배포 전 반드시 사람이 검토해야 합니다.' },
-  risky:      { color: '#ff4d6d', bg: 'rgba(255,77,109,0.1)', border: 'rgba(255,77,109,0.3)', label: 'RISKY',      desc: '출처 불명 또는 위험 전파 중',    action: '즉시 격리 및 검토가 필요합니다. 해당 블록을 프로덕션에서 분리하세요.' },
+  trusted:    { color: '#34C38F', bg: 'rgba(52,195,143,0.1)',   border: 'rgba(52,195,143,0.3)',   label: 'TRUSTED',    desc: '검증된 안전한 코드',           action: '정기 재검토를 권장합니다. 현재 배포 가능한 상태입니다.' },
+  reviewed:   { color: '#5B9BF0', bg: 'rgba(91,155,240,0.1)',  border: 'rgba(91,155,240,0.3)',  label: 'REVIEWED',   desc: '검토됐으나 일부 미비',          action: '배포 전 재확인을 권장합니다. 주요 로직을 한 번 더 검토하세요.' },
+  unverified: { color: '#E5A43B', bg: 'rgba(229,164,59,0.1)',  border: 'rgba(229,164,59,0.3)',  label: 'UNVERIFIED', desc: '검토 이력 부족',               action: '수동 검토가 필수입니다. 배포 전 반드시 사람이 검토해야 합니다.' },
+  risky:      { color: '#F0637C', bg: 'rgba(240,99,124,0.1)', border: 'rgba(240,99,124,0.3)', label: 'RISKY',      desc: '출처 불명 또는 위험 전파 중',    action: '즉시 격리 및 검토가 필요합니다. 해당 블록을 프로덕션에서 분리하세요.' },
 };
 
 function getGrade(score) {

@@ -10,9 +10,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 :root{
-  --paper:#EEF1F4; --paper-2:#E3E8EE; --ink:#142033; --ink-2:#4A5A70; --line:#C9D2DC;
-  --cert:#102A43; --cert-2:#173A5C; --cert-line:#2B4C6F; --cert-text:#D9E6F2; --cert-dim:#8FA7BF;
-  --trusted:#0E9F6E; --reviewed:#2F6FDB; --unverified:#C77700; --risky:#D63A55;
+  --paper:#0F1C2B; --paper-2:#1C3047; --ink:#E6EDF5; --ink-2:#A9BACB; --line:#2A4560;
+  --cert:#16283C; --cert-2:#173A5C; --cert-line:#2B4C6F; --cert-text:#D9E6F2; --cert-dim:#8FA7BF;
+  --trusted:#34C38F; --reviewed:#5B9BF0; --unverified:#E5A43B; --risky:#F0637C;
   --mono:'IBM Plex Mono','Pretendard Variable',ui-monospace,monospace;
 }
 *{box-sizing:border-box}
@@ -37,12 +37,12 @@ a{color:inherit}
 .lead b{color:var(--ink);font-weight:650}
 .actions{display:flex;flex-wrap:wrap;gap:12px}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:10px;font-weight:650;font-size:16px;text-decoration:none;border:1.5px solid var(--ink);transition:background .15s,color .15s}
-.btn.primary{background:var(--ink);color:#fff}
-.btn.primary:hover{background:#000}
-.btn.ghost:hover{background:var(--ink);color:#fff}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:#fff}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
 
 /* certificate — the one bold thing */
-.cert{background:var(--cert);color:var(--cert-text);border-radius:18px;padding:26px 26px 22px;position:relative;box-shadow:0 30px 60px -30px rgba(16,42,67,.55)}
+.cert{border:1px solid var(--cert-line);background:var(--cert);color:var(--cert-text);border-radius:18px;padding:26px 26px 22px;position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.45)}
 .cert-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
 .cert-head h2{font-size:17px;font-weight:700;margin:0;color:#fff;letter-spacing:-.01em}
 .cert-head small{font-size:13px;color:var(--cert-dim)}
@@ -74,7 +74,7 @@ section{padding:88px 0;border-top:1px solid var(--line)}
 .demo{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center;padding:40px 0}
 .demo:nth-of-type(even){grid-template-columns:1fr 1.25fr}
 .demo:nth-of-type(even) figure{order:2}
-.demo figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.demo figure{margin:0;background:var(--cert);border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .demo figure img{display:block;width:100%;height:auto}
 .demo figcaption{font-size:13px;color:var(--ink-2);padding:10px 16px;border-top:1px solid var(--line)}
 .demo h3{font-size:28px;letter-spacing:-.03em;margin:0 0 6px;font-weight:800}
@@ -83,7 +83,7 @@ section{padding:88px 0;border-top:1px solid var(--line)}
 .demo ul{margin:0 0 24px;padding:0;list-style:none}
 .demo li{padding:7px 0;border-bottom:1px solid var(--line);font-size:15.5px}
 .legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
-.chip{font:600 12.5px var(--mono);padding:4px 10px;border-radius:999px;color:#fff}
+.chip{font:600 13px var(--mono);padding:4px 10px;border-radius:999px;color:var(--paper)}
 .chip.t{background:var(--trusted)}.chip.r{background:var(--reviewed)}.chip.u{background:var(--unverified)}.chip.x{background:var(--risky)}
 
 /* why */
@@ -180,7 +180,7 @@ footer a{text-decoration:none;font-weight:600;color:var(--ink)}
     </div>
 
     <article class="demo">
-      <figure><img src="Demo_image/GCA_%EC%84%9C%EB%AA%85_%EC%8B%9C%EB%AE%AC%EB%A0%88%EC%9D%B4%ED%84%B0.png" alt="GCA 서명 시뮬레이터 화면: 코드와 모델, 프롬프트를 넣으면 서명 필드가 생성된다" loading="lazy"><figcaption>GCA 서명 시뮬레이터</figcaption></figure>
+      <figure><img src="Demo_image/gca_simulator.png" alt="GCA 서명 시뮬레이터 화면: 예시 코드의 출생 증명서와 서명 검증 결과" loading="lazy"><figcaption>GCA 서명 시뮬레이터</figcaption></figure>
       <div>
         <p class="stage">생성 순간</p>
         <h3>GCA 서명 시뮬레이터</h3>
@@ -196,7 +196,7 @@ footer a{text-decoration:none;font-weight:600;color:var(--ink)}
     </article>
 
     <article class="demo">
-      <figure><img src="Demo_image/%EA%B3%84%EB%B3%B4%EA%B7%B8%EB%9E%98%ED%94%84.gif" alt="계보 그래프 데모: 코드 블록이 노드로, 파생·의존·위험 전파가 엣지로 그려진다" loading="lazy"><figcaption>계보 그래프 시각화</figcaption></figure>
+      <figure><img src="Demo_image/lineage_graph.png" alt="계보 그래프 데모: 코드 블록이 노드로, 파생·의존·위험 전파가 엣지로 그려진다" loading="lazy"><figcaption>계보 그래프 시각화</figcaption></figure>
       <div>
         <p class="stage">수정·전파</p>
         <h3>계보 그래프</h3>
@@ -211,14 +211,14 @@ footer a{text-decoration:none;font-weight:600;color:var(--ink)}
     </article>
 
     <article class="demo">
-      <figure><img src="Demo_image/%EC%8B%A0%EB%A2%B0%EC%A0%90%EC%88%98%EA%B3%84%EC%82%B0%EA%B8%B0.gif" alt="신뢰 점수 계산기 데모: 네 요소의 슬라이더를 움직이면 점수와 등급이 바뀐다" loading="lazy"><figcaption>신뢰 점수 계산기</figcaption></figure>
+      <figure><img src="Demo_image/trust_score.png" alt="신뢰 점수 계산기 데모: 네 요소의 슬라이더를 움직이면 점수와 등급이 바뀐다" loading="lazy"><figcaption>신뢰 점수 계산기</figcaption></figure>
       <div>
         <p class="stage">배포 전</p>
         <h3>신뢰 점수 계산기</h3>
         <p>네 가지 요소를 슬라이더로 움직이면 점수와 등급이 바로 바뀝니다. 숫자 하나가 아니라 어떤 요소 때문에 그 점수인지 함께 보여 줍니다.</p>
         <ul>
           <li>사람 검토 이력 30% · 서명 유효성 25% · 모델 신뢰 등급 25% · 전파 위험도 20%</li>
-          <li>안전한 모델이 만든 코드라도 아무도 검토하지 않았으면 RISKY</li>
+          <li>검토 이력이 없으면 나머지가 만점이어도 0.70 — TRUSTED(0.80 이상)가 될 수 없음</li>
         </ul>
         <a class="btn primary" href="Demo_code/Trust_score_calculator.html">신뢰 점수 계산기 열기</a>
       </div>

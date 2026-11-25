@@ -8,9 +8,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 :root{
-  --paper:#EEF1F4; --paper-2:#E3E8EE; --ink:#142033; --ink-2:#4A5A70; --line:#C9D2DC;
-  --cert:#102A43; --cert-line:#2B4C6F; --cert-text:#D9E6F2; --cert-dim:#8FA7BF;
-  --trusted:#0E9F6E; --reviewed:#2F6FDB; --unverified:#C77700; --risky:#D63A55;
+  --paper:#0F1C2B; --paper-2:#1C3047; --ink:#E6EDF5; --ink-2:#A9BACB; --line:#2A4560;
+  --cert:#16283C; --cert-line:#2B4C6F; --cert-text:#D9E6F2; --cert-dim:#8FA7BF;
+  --trusted:#34C38F; --reviewed:#5B9BF0; --unverified:#E5A43B; --risky:#F0637C;
+  --surface:#16283C;
   --mono:'IBM Plex Mono','Pretendard Variable',ui-monospace,monospace;
 }
 *{box-sizing:border-box}
@@ -25,27 +26,27 @@ h1{font-size:clamp(32px,4.4vw,52px);letter-spacing:-.04em;line-height:1.15;margi
 .intro b{color:var(--ink)}
 
 .grid{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:start}
-.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px}
 .step{display:flex;gap:12px;align-items:baseline;margin:0 0 14px}
-.step .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center;transform:translateY(-2px)}
+.step .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);font-size:14.5px;font-weight:700;display:grid;place-items:center;transform:translateY(-2px)}
 .step h2{font-size:19px;margin:0;letter-spacing:-.02em}
 .step p{margin:0;color:var(--ink-2);font-size:14.5px}
 .block+.block{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
 label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px}
 label small{font-weight:400;color:var(--ink-2)}
-textarea,input,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;background:#F8FAFC;color:var(--ink);font-family:inherit}
+textarea,input,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;background:var(--paper);color:var(--ink);font-family:inherit}
 textarea.code{font:14px/1.6 var(--mono);height:118px;resize:vertical;background:#0E2236;color:#E8F1FA;border-color:#0E2236}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .presets{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 4px}
-.chip-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.chip-btn{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 12px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
 .chip-btn:hover{border-color:var(--ink)}
-.btn{display:block;width:100%;margin-top:18px;padding:14px;border:0;border-radius:12px;background:var(--ink);color:#fff;font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
-.btn:hover{background:#000}
+.btn{display:block;width:100%;margin-top:18px;padding:14px;border:0;border-radius:12px;background:var(--ink);color:var(--paper);font:inherit;font-size:16.5px;font-weight:700;cursor:pointer}
+.btn:hover{background:#fff}
 .btn.line{background:#fff;color:var(--ink);border:1.5px solid var(--ink);margin-top:0}
 .btn.line:hover{background:var(--ink);color:#fff}
 
 /* certificate */
-.cert{background:var(--cert);color:var(--cert-text);border-radius:16px;padding:24px;position:relative;min-height:420px}
+.cert{border:1px solid var(--cert-line);background:var(--cert);color:var(--cert-text);border-radius:16px;padding:24px;position:relative;min-height:420px}
 .cert h2{color:#fff;font-size:19px;margin:0 0 4px;letter-spacing:-.02em}
 .cert .sub{color:var(--cert-dim);font-size:14px;margin:0 0 18px}
 .empty{color:var(--cert-dim);border:1.5px dashed var(--cert-line);border-radius:12px;padding:44px 20px;text-align:center;font-size:15px}
@@ -53,30 +54,30 @@ textarea.code{font:14px/1.6 var(--mono);height:118px;resize:vertical;background:
 .r{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:10px 0;border-bottom:1px solid #1D3A57}
 .r:last-child{border-bottom:0}
 .r .k{font-size:14px;font-weight:650;color:#fff}
-.r .k span{display:block;font:500 12px var(--mono);color:var(--cert-dim)}
-.r .v{font:500 13.5px var(--mono);color:#E8F1FA;overflow-wrap:anywhere}
-.r .v em{display:block;font:400 13px 'Pretendard Variable',sans-serif;color:var(--cert-dim);font-style:normal;margin-top:2px}
+.r .k span{display:block;font:500 13.5px var(--mono);color:var(--cert-dim)}
+.r .v{font:500 15px var(--mono);color:#E8F1FA;overflow-wrap:anywhere}
+.r .v em{display:block;font:400 14.5px 'Pretendard Variable',sans-serif;color:var(--cert-dim);font-style:normal;margin-top:2px}
 .changed{animation:hl 1.2s ease-out}
 @keyframes hl{from{background:rgba(127,227,190,.18)}to{background:transparent}}
 .grade{position:absolute;top:22px;right:22px;transform:rotate(-6deg);border:2.5px solid currentColor;border-radius:8px;padding:3px 12px;font:700 15px var(--mono)}
 .grade.TRUSTED{color:var(--trusted)}.grade.REVIEWED{color:#6FA8FF}.grade.UNVERIFIED{color:#F0A63A}.grade.RISKY{color:#FF7A90}
 .verdict{margin-top:16px;padding:12px 14px;border-radius:10px;font-size:15px;font-weight:600}
-.verdict.ok{background:rgba(14,159,110,.16);color:#7FE3BE}
-.verdict.bad{background:rgba(214,58,85,.18);color:#FF9AAB}
-.verdict.none{background:rgba(199,119,0,.18);color:#F5C27A}
+.verdict.ok{background:rgba(52,195,143,.16);color:#7FE3BE}
+.verdict.bad{background:rgba(240,99,124,.18);color:#FF9AAB}
+.verdict.none{background:rgba(229,164,59,.18);color:#F5C27A}
 
 /* experiments */
 .try{margin-top:28px}
 .try h2{font-size:21px;letter-spacing:-.02em;margin:0 0 4px}
 .try > p{color:var(--ink-2);margin:0 0 16px}
 .tasks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.tasks li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
-.tasks li.done{border-color:var(--trusted);background:#F2FBF7}
+.tasks li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.tasks li.done{border-color:var(--trusted);background:rgba(52,195,143,.08)}
 .tasks b{font-size:15.5px;letter-spacing:-.01em}
 .tasks p{margin:0;font-size:14px;color:var(--ink-2);flex:1}
-.tasks .res{font-size:13.5px;font-weight:650;color:var(--trusted);min-height:1.4em}
-.tasks button{align-self:flex-start;border:1.5px solid var(--ink);background:#fff;border-radius:8px;padding:7px 12px;font:inherit;font-size:14px;font-weight:650;cursor:pointer}
-.tasks button:hover{background:var(--ink);color:#fff}
+.tasks .res{font-size:15px;font-weight:650;color:var(--trusted);min-height:1.4em}
+.tasks button{align-self:flex-start;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+.tasks button:hover{background:var(--ink);color:var(--paper)}
 
 @media (max-width:960px){.grid{grid-template-columns:1fr}.tasks{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.tasks{grid-template-columns:1fr}.r{grid-template-columns:1fr;gap:2px}.two{grid-template-columns:1fr}.grade{position:static;display:inline-block;margin-bottom:12px}}
@@ -91,7 +92,7 @@ textarea.code{font:14px/1.6 var(--mono);height:118px;resize:vertical;background:
   </header>
 
   <h1>GCA 서명 시뮬레이터</h1>
-  <p class="intro">AI가 코드를 만드는 순간, <b>어떤 모델이 어떤 요청으로 언제 만들었는지</b>를 서명과 함께 기록합니다. 아래 예시 그대로 <b>서명 만들기</b>를 누른 뒤, 오른쪽 아래 실험 네 가지를 차례로 해 보세요.</p>
+  <p class="intro">AI가 코드를 만드는 순간, <b>어떤 모델이 어떤 요청으로 언제 만들었는지</b>를 서명과 함께 기록합니다. 오른쪽에 예시 코드의 증명서가 이미 나와 있습니다. 코드를 바꿔 <b>서명 만들기</b>를 다시 누르거나, 아래 실험 네 가지를 차례로 해 보세요.</p>
 
   <div class="grid">
     <form class="panel" onsubmit="event.preventDefault(); sign();">
@@ -122,7 +123,7 @@ textarea.code{font:14px/1.6 var(--mono);height:118px;resize:vertical;background:
     </form>
 
     <section class="cert" aria-live="polite">
-      <div class="step" style="margin-bottom:6px"><span class="n" style="background:#fff;color:var(--cert)">3</span><div><h2>코드 출생 증명서</h2></div></div>
+      <div class="step" style="margin-bottom:6px"><span class="n" style="background:var(--ink);color:var(--cert)">3</span><div><h2>코드 출생 증명서</h2></div></div>
       <p class="sub">이 코드가 어디서 왔고 믿을 수 있는지 보여 줍니다.</p>
       <div id="grade"></div>
       <div id="out"><div class="empty">왼쪽에서 <b>서명 만들기</b>를 누르면 여기에 증명서가 나옵니다.</div></div>
@@ -254,6 +255,7 @@ async function exp4(){
   await sign();
   done('t4', `✓ 등급이 ${last.grade}로 올랐습니다`);
 }
+sign(); // 처음 열면 예시 증명서가 바로 보이게
 </script>
 </body>
 </html>
