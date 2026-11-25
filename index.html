@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>이 코드, 어디서 왔니? — AI 생성 코드의 계보 기반 신뢰 추적</title>
+<meta name="description" content="AI가 만든 코드에 출생 증명서를 붙여, 어디서 왔고 믿을 수 있는지 추적하는 시스템 설계와 데모 3종.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#EEF1F4; --paper-2:#E3E8EE; --ink:#142033; --ink-2:#4A5A70; --line:#C9D2DC;
+  --cert:#102A43; --cert-2:#173A5C; --cert-line:#2B4C6F; --cert-text:#D9E6F2; --cert-dim:#8FA7BF;
+  --trusted:#0E9F6E; --reviewed:#2F6FDB; --unverified:#C77700; --risky:#D63A55;
+  --mono:'IBM Plex Mono','Pretendard Variable',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--reviewed);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+
+/* top */
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px 0;font-size:14px;color:var(--ink-2)}
+.top strong{color:var(--ink);font-weight:700}
+.top nav{display:flex;gap:22px}
+.top nav a{text-decoration:none}
+.top nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center;padding:56px 0 96px}
+.hero h1{font-size:clamp(48px,7vw,92px);line-height:1.02;letter-spacing:-.045em;font-weight:800;margin:0 0 28px}
+.hero h1 span{display:block}
+.lead{font-size:20px;line-height:1.65;color:var(--ink-2);max-width:30em;margin:0 0 36px}
+.lead b{color:var(--ink);font-weight:650}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:10px;font-weight:650;font-size:16px;text-decoration:none;border:1.5px solid var(--ink);transition:background .15s,color .15s}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.primary:hover{background:#000}
+.btn.ghost:hover{background:var(--ink);color:#fff}
+
+/* certificate — the one bold thing */
+.cert{background:var(--cert);color:var(--cert-text);border-radius:18px;padding:26px 26px 22px;position:relative;box-shadow:0 30px 60px -30px rgba(16,42,67,.55)}
+.cert-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.cert-head h2{font-size:17px;font-weight:700;margin:0;color:#fff;letter-spacing:-.01em}
+.cert-head small{font-size:13px;color:var(--cert-dim)}
+.cert label{display:block;font-size:13px;color:var(--cert-dim);margin:0 0 6px}
+.cert textarea{width:100%;height:132px;resize:vertical;background:#0A1E31;color:#E8F1FA;border:1px solid var(--cert-line);border-radius:10px;padding:12px 14px;font:14px/1.6 var(--mono);tab-size:2}
+.cert .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 16px}
+.cert select,.cert input{width:100%;background:#0A1E31;color:#E8F1FA;border:1px solid var(--cert-line);border-radius:8px;padding:9px 10px;font:14px var(--mono)}
+.fields{border-top:1px dashed var(--cert-line);padding-top:14px;display:grid;gap:9px}
+.field{display:grid;grid-template-columns:128px 1fr;gap:12px;align-items:baseline}
+.field dt{font:500 13px var(--mono);color:var(--cert-dim)}
+.field dd{margin:0;font:500 13.5px var(--mono);color:#fff;overflow-wrap:anywhere}
+.field dd.flash{animation:flash .6s ease-out}
+@keyframes flash{from{color:#7FE3BE}to{color:#fff}}
+.stamp{position:absolute;right:22px;bottom:20px;transform:rotate(-8deg);border:2.5px solid currentColor;border-radius:8px;padding:4px 12px;font:700 15px var(--mono);letter-spacing:.04em;opacity:.95}
+.stamp.trusted{color:var(--trusted)} .stamp.unverified{color:var(--unverified)}
+.cert-note{font-size:13px;color:var(--cert-dim);margin:16px 0 0;padding-right:150px;line-height:1.55}
+
+/* flow */
+section{padding:88px 0;border-top:1px solid var(--line)}
+.sec-title{font-size:clamp(30px,3.6vw,44px);letter-spacing:-.035em;line-height:1.2;font-weight:800;margin:0 0 14px}
+.sec-lead{color:var(--ink-2);max-width:38em;margin:0 0 48px;font-size:18px}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:0 0 56px;counter-reset:s}
+.flow div{padding:18px 22px 18px 0;border-top:3px solid var(--ink);position:relative}
+.flow div+div{padding-left:22px}
+.flow b{display:block;font-size:19px;letter-spacing:-.02em}
+.flow p{margin:4px 0 0;color:var(--ink-2);font-size:15.5px}
+.flow .k{font-size:14px;font-weight:650;color:var(--ink-2)}
+
+.demo{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:center;padding:40px 0}
+.demo:nth-of-type(even){grid-template-columns:1fr 1.25fr}
+.demo:nth-of-type(even) figure{order:2}
+.demo figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.demo figure img{display:block;width:100%;height:auto}
+.demo figcaption{font-size:13px;color:var(--ink-2);padding:10px 16px;border-top:1px solid var(--line)}
+.demo h3{font-size:28px;letter-spacing:-.03em;margin:0 0 6px;font-weight:800}
+.demo .stage{font-size:14px;font-weight:650;color:var(--ink-2);margin:0 0 10px}
+.demo p{color:var(--ink-2);margin:0 0 16px}
+.demo ul{margin:0 0 24px;padding:0;list-style:none}
+.demo li{padding:7px 0;border-bottom:1px solid var(--line);font-size:15.5px}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+.chip{font:600 12.5px var(--mono);padding:4px 10px;border-radius:999px;color:#fff}
+.chip.t{background:var(--trusted)}.chip.r{background:var(--reviewed)}.chip.u{background:var(--unverified)}.chip.x{background:var(--risky)}
+
+/* why */
+.why{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.quote{font-size:clamp(26px,3vw,36px);line-height:1.35;letter-spacing:-.03em;font-weight:750;margin:0}
+.gaps{margin:0;padding:0;list-style:none}
+.gaps li{padding:16px 0;border-bottom:1px solid var(--line)}
+.gaps b{display:block;font-size:18px}
+.gaps span{color:var(--ink-2);font-size:15.5px}
+table{width:100%;border-collapse:collapse;margin-top:56px;font-size:15.5px}
+th,td{text-align:left;padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:700;color:var(--ink-2);font-size:14px;border-bottom:2px solid var(--ink)}
+td:first-child{font-weight:700;white-space:nowrap}
+
+/* docs */
+.docs{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:0;padding:0;list-style:none;border-top:2px solid var(--ink)}
+.docs li{border-right:1px solid var(--line)}
+.docs li:last-child{border-right:0}
+.docs a{display:block;padding:18px 18px 22px;text-decoration:none;height:100%}
+.docs a:hover{background:var(--paper-2)}
+.docs .n{font:600 13px var(--mono);color:var(--ink-2)}
+.docs b{display:block;font-size:17px;margin-top:6px;letter-spacing:-.02em}
+.pdf{margin-top:28px;font-size:16px}
+
+footer{padding:40px 0 56px;border-top:1px solid var(--line);color:var(--ink-2);font-size:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+footer a{text-decoration:none;font-weight:600;color:var(--ink)}
+
+@media (max-width:900px){
+  .hero,.why,.demo,.demo:nth-of-type(even){grid-template-columns:1fr;gap:32px}
+  .demo:nth-of-type(even) figure{order:0}
+  .flow{grid-template-columns:1fr}.flow div+div{padding-left:0}
+  .docs{grid-template-columns:1fr}.docs li{border-right:0;border-bottom:1px solid var(--line)}
+  .top nav{display:none}
+  .cert-note{padding-right:0;padding-bottom:44px}
+  td:first-child{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span><strong>제일코딩</strong> · 바이브 코딩 AI 개선 아이디어 공모전 출품작</span>
+    <nav aria-label="페이지 안 이동">
+      <a href="#demos">데모</a><a href="#why">왜 필요한가</a><a href="#docs">기획 문서</a>
+      <a href="https://github.com/vibe-coding-research/vibe-coding-improvement">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+  <div class="hero">
+    <div>
+      <h1><span>이 코드,</span><span>어디서 왔니?</span></h1>
+      <p class="lead">AI가 만든 코드는 실행은 되지만, <b>누가 어떤 의도로 만들었고 누가 검토했는지</b>는 남지 않습니다. 코드가 태어나는 순간 출생 증명서를 붙여, 수정되고 퍼지는 과정까지 추적하는 시스템을 설계했습니다.</p>
+      <div class="actions">
+        <a class="btn primary" href="#demos">데모 3종 보기</a>
+        <a class="btn ghost" href="#docs">기획 문서 읽기</a>
+      </div>
+    </div>
+
+    <form class="cert" id="cert" aria-label="코드 출생 증명서 발급 체험" onsubmit="return false">
+      <div class="cert-head"><h2>코드 출생 증명서</h2><small>직접 고쳐 보세요</small></div>
+      <label for="code">AI가 만든 코드</label>
+<textarea id="code" spellcheck="false">def apply_discount(price, rate):
+    # 할인율은 0~1 사이
+    if not 0 <= rate <= 1:
+        raise ValueError("rate")
+    return round(price * (1 - rate))</textarea>
+      <div class="row">
+        <div><label for="model">생성 모델</label>
+          <select id="model">
+            <option>claude-sonnet-4-6</option><option>gpt-4o</option><option>gemini-2.5-pro</option><option value="unknown">unknown (기록 없음)</option>
+          </select></div>
+        <div><label for="prompt">프롬프트</label><input id="prompt" value="할인 금액 계산 함수 만들어 줘"></div>
+      </div>
+      <dl class="fields">
+        <div class="field"><dt>block_id</dt><dd id="f-block">—</dd></div>
+        <div class="field"><dt>prompt_hash</dt><dd id="f-prompt">—</dd></div>
+        <div class="field"><dt>timestamp</dt><dd id="f-time">—</dd></div>
+        <div class="field"><dt>attestation_sig</dt><dd id="f-sig">—</dd></div>
+      </dl>
+      <p class="cert-note">변수 이름·공백·주석을 지운 구조로 block_id를 만들어서, 주석만 고치면 그대로이고 로직을 고치면 바뀝니다. 프롬프트는 원문 대신 해시만 남습니다.</p>
+      <div class="stamp trusted" id="stamp" aria-live="polite">SIGNED</div>
+    </form>
+  </div>
+
+  <section id="demos">
+    <h2 class="sec-title">코드가 태어나서 판정받기까지</h2>
+    <p class="sec-lead">시스템은 세 단계로 움직입니다. 단계마다 직접 만져 볼 수 있는 데모를 만들었습니다. 모두 설치 없이 브라우저에서 열립니다.</p>
+    <div class="flow" aria-label="시스템 흐름">
+      <div><span class="k">생성 순간</span><b>서명으로 기록</b><p>어떤 모델이 어떤 의도로 언제 만들었는지</p></div>
+      <div><span class="k">수정·전파</span><b>계보로 추적</b><p>어느 블록에서 갈라져 어디로 퍼졌는지</p></div>
+      <div><span class="k">배포 전</span><b>신뢰 점수로 판정</b><p>점수와 함께 왜 그 점수인지까지</p></div>
+    </div>
+
+    <article class="demo">
+      <figure><img src="Demo_image/GCA_%EC%84%9C%EB%AA%85_%EC%8B%9C%EB%AE%AC%EB%A0%88%EC%9D%B4%ED%84%B0.png" alt="GCA 서명 시뮬레이터 화면: 코드와 모델, 프롬프트를 넣으면 서명 필드가 생성된다" loading="lazy"><figcaption>GCA 서명 시뮬레이터</figcaption></figure>
+      <div>
+        <p class="stage">생성 순간</p>
+        <h3>GCA 서명 시뮬레이터</h3>
+        <p>AI가 코드를 만드는 순간 붙는 서명을 단계별로 보여 줍니다. 브라우저의 Web Crypto로 실제 SHA-256과 HMAC-SHA256을 계산합니다.</p>
+        <ul>
+          <li>코드를 구조로 정규화해 block_id 생성</li>
+          <li>프롬프트는 해시만 저장해 내용은 비공개, 검증은 가능</li>
+          <li>모델을 unknown으로 두면 서명 없이 UNVERIFIED</li>
+        </ul>
+        <a class="btn primary" href="Demo_code/Gca_simulator.html">서명 시뮬레이터 열기</a>
+      </div>
+    </article>
+
+    <article class="demo">
+      <figure><img src="Demo_image/%EA%B3%84%EB%B3%B4%EA%B7%B8%EB%9E%98%ED%94%84.gif" alt="계보 그래프 데모: 코드 블록이 노드로, 파생·의존·위험 전파가 엣지로 그려진다" loading="lazy"><figcaption>계보 그래프 시각화</figcaption></figure>
+      <div>
+        <p class="stage">수정·전파</p>
+        <h3>계보 그래프</h3>
+        <p>코드 블록의 생성부터 전파까지를 방향성 비순환 그래프로 그립니다. 노드를 누르면 서명 정보, 생성 세션, 검토 이력이 열립니다.</p>
+        <div class="legend"><span class="chip t">TRUSTED</span><span class="chip r">REVIEWED</span><span class="chip u">UNVERIFIED</span><span class="chip x">RISKY</span></div>
+        <ul>
+          <li>파생·의존·위험 전파 관계를 선 모양으로 구분</li>
+          <li>취약점은 의존 블록을 따라 퍼지고, 한 단계마다 위험이 0.7배로 줄어듦</li>
+        </ul>
+        <a class="btn primary" href="Demo_code/Lineage_graph.html">계보 그래프 열기</a>
+      </div>
+    </article>
+
+    <article class="demo">
+      <figure><img src="Demo_image/%EC%8B%A0%EB%A2%B0%EC%A0%90%EC%88%98%EA%B3%84%EC%82%B0%EA%B8%B0.gif" alt="신뢰 점수 계산기 데모: 네 요소의 슬라이더를 움직이면 점수와 등급이 바뀐다" loading="lazy"><figcaption>신뢰 점수 계산기</figcaption></figure>
+      <div>
+        <p class="stage">배포 전</p>
+        <h3>신뢰 점수 계산기</h3>
+        <p>네 가지 요소를 슬라이더로 움직이면 점수와 등급이 바로 바뀝니다. 숫자 하나가 아니라 어떤 요소 때문에 그 점수인지 함께 보여 줍니다.</p>
+        <ul>
+          <li>사람 검토 이력 30% · 서명 유효성 25% · 모델 신뢰 등급 25% · 전파 위험도 20%</li>
+          <li>안전한 모델이 만든 코드라도 아무도 검토하지 않았으면 RISKY</li>
+        </ul>
+        <a class="btn primary" href="Demo_code/Trust_score_calculator.html">신뢰 점수 계산기 열기</a>
+      </div>
+    </article>
+  </section>
+
+  <section id="why">
+    <div class="why">
+      <p class="quote">신뢰의 근거는 이해에서 검증과 추적으로 옮겨 가야 합니다.</p>
+      <ul class="gaps">
+        <li><b>코드를 이해하지 못한 채 씁니다</b><span>실행되는지만 확인하고 안의 로직은 모른 채 넘어갑니다.</span></li>
+        <li><b>검증 없이 받아들입니다</b><span>겉은 멀쩡하지만 속에 결함이 있는 코드가 그대로 서비스에 들어갑니다.</span></li>
+        <li><b>이력과 책임이 사라집니다</b><span>Git은 무엇이 바뀌었는지는 남기지만, 어떤 의도였고 AI와 사람 중 누가 판단했는지는 남기지 않습니다.</span></li>
+      </ul>
+    </div>
+    <table>
+      <thead><tr><th>관점</th><th>아이디어</th><th>해결하는 문제</th><th>핵심 기술</th></tr></thead>
+      <tbody>
+        <tr><td>기술</td><td>생성 맥락 서명 (GCA)</td><td>AI 코드의 출처를 알 수 없음</td><td>AST 정규화 + 암호학적 서명</td></tr>
+        <tr><td>프로세스</td><td>세션 단위 계보 추적</td><td>프롬프트와 코드의 인과관계가 사라짐</td><td>세션 그래프 모델링</td></tr>
+        <tr><td>운영</td><td>위험 전파 경로 분석</td><td>취약점이 조용히 퍼짐</td><td>DAG 기반 위험 전파</td></tr>
+        <tr><td>검증</td><td>설명 가능한 신뢰 점수</td><td>실행 성공을 품질 보증으로 착각</td><td>다차원 신뢰 스코어링</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="docs">
+    <h2 class="sec-title">기획 문서</h2>
+    <p class="sec-lead">문제 정의부터 한계까지, 순서대로 읽으면 설계의 이유가 이어집니다.</p>
+    <ol class="docs">
+      <li><a href="Documents/1-problem-definition.md"><span class="n">1</span><b>문제 정의</b></a></li>
+      <li><a href="Documents/2-root-cause-analysis.md"><span class="n">2</span><b>원인 분석</b></a></li>
+      <li><a href="Documents/3-core-improvement-idea.md"><span class="n">3</span><b>핵심 아이디어</b></a></li>
+      <li><a href="Documents/4-application-scenario-and-effect.md"><span class="n">4</span><b>적용 시나리오와 기대 효과</b></a></li>
+      <li><a href="Documents/5-limitations-and-extension.md"><span class="n">5</span><b>한계와 확장</b></a></li>
+    </ol>
+    <p class="pdf"><a href="Documents/%EC%9D%B4%20%EC%BD%94%EB%93%9C_%20%EC%96%B4%EB%94%94%EC%84%9C%20%EC%99%94%EB%8B%88.pdf">발표 자료 PDF 보기</a></p>
+  </section>
+  </main>
+
+  <footer>
+    <span>제일코딩 — <a href="https://github.com/FAITRUEE">LEE SEONGJIN</a>, <a href="https://github.com/ryu2293">Seungrae Ryu</a> · 2026</span>
+    <a href="https://github.com/vibe-coding-research/vibe-coding-improvement">GitHub 저장소</a>
+  </footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const enc = new TextEncoder();
+const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+const sha = async s => hex(await crypto.subtle.digest('SHA-256', enc.encode(s)));
+async function hmac(key, msg){
+  const k = await crypto.subtle.importKey('raw', enc.encode(key), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+  return hex(await crypto.subtle.sign('HMAC', k, enc.encode(msg)));
+}
+// 주석·공백 제거 + 식별자를 순서대로 v0, v1… 로 바꿔 구조만 남긴다
+function normalize(code){
+  const kw = new Set('def return if not and or in is raise for while else elif import from class try except with as lambda None True False pass break continue yield async await'.split(' '));
+  const names = new Map();
+  return code.replace(/#.*$/gm,'').replace(/"[^"]*"|'[^']*'/g,'"s"')
+    .replace(/[A-Za-z_]\w*/g, w => kw.has(w) ? w : (names.has(w) ? names.get(w) : (names.set(w,'v'+names.size), names.get(w))))
+    .replace(/\s+/g,'');
+}
+function set(id, v){ const el=$(id); if(el.textContent!==v){ el.textContent=v; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); } }
+const short = h => h.slice(0,16)+'…'+h.slice(-6);
+async function render(){
+  const code=$('code').value, model=$('model').value, prompt=$('prompt').value;
+  const block = await sha(normalize(code));
+  const ph = await sha(prompt);
+  set('f-block', short(block));
+  set('f-prompt', short(ph));
+  const stamp=$('stamp');
+  if(model==='unknown'){
+    set('f-time','기록 없음'); set('f-sig','서명 없음');
+    stamp.textContent='UNVERIFIED'; stamp.className='stamp unverified';
+  } else {
+    const ts = new Date().toISOString().slice(0,19)+'Z';
+    $('f-time').textContent = ts;
+    const sig = await hmac('demo-key', [block, model, ph, ts].join('|'));
+    set('f-sig', short(sig));
+    stamp.textContent='SIGNED'; stamp.className='stamp trusted';
+  }
+}
+let t; ['code','model','prompt'].forEach(id => $(id).addEventListener('input', () => { clearTimeout(t); t=setTimeout(render,180); }));
+render();
+</script>
+</body>
+</html>

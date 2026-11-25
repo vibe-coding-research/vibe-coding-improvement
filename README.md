@@ -1,4 +1,17 @@
-# Vibe Coding 환경 개선 아이디어 제안
+# 이 코드, 어디서 왔니? — AI 생성 코드의 계보 기반 신뢰 추적
+
+> AI가 만든 코드에 출생 증명서를 붙여, 어디서 왔고 믿을 수 있는지 추적하는 시스템 설계 · 바이브 코딩 AI 개선 아이디어 공모전 출품작
+
+**[▶ 소개 페이지와 데모 바로 보기](https://vibe-coding-research.github.io/vibe-coding-improvement/)**
+
+| 데모 | 바로 열기 |
+|---|---|
+| GCA 서명 시뮬레이터 | [열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Gca_simulator.html) |
+| 계보 그래프 | [열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Lineage_graph.html) |
+| 신뢰 점수 계산기 | [열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Trust_score_calculator.html) |
+
+발표 자료: [이 코드, 어디서 왔니? (PDF)](./Documents/이%20코드_%20어디서%20왔니.pdf)
+
 
 ## 참여자
 
@@ -57,7 +70,7 @@
 
 ## 시스템 데모
 
-### 1. 계보 그래프 시각화
+### 1. 계보 그래프 시각화  ·  [데모 열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Lineage_graph.html)
 
 ![계보 그래프 시각화 데모](./Demo_image/계보그래프.gif)
 
@@ -76,7 +89,7 @@ RISKY 블록에서 발생한 취약점은 빨간 실선을 따라 의존 블록 
 
 ---
 
-### 2. GCA 서명 시뮬레이터
+### 2. GCA 서명 시뮬레이터  ·  [데모 열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Gca_simulator.html)
 
 ![GCA 서명 시뮬레이터 데모](./Demo_image/GCA_서명_시뮬레이터.png)
 
@@ -86,7 +99,7 @@ AI가 코드를 생성하는 순간 부여되는 암호학적 서명을 직접 �
 
 ---
 
-### 3. 신뢰 점수 계산기
+### 3. 신뢰 점수 계산기  ·  [데모 열기](https://vibe-coding-research.github.io/vibe-coding-improvement/Demo_code/Trust_score_calculator.html)
 
 ![신뢰 점수 계산기 데모](./Demo_image/신뢰점수계산기.gif)
 
