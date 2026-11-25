@@ -365,6 +365,21 @@
   .node.selected circle{filter:drop-shadow(0 0 6px currentColor)}
   .alert-bar{font-family:'Pretendard Variable',sans-serif;font-size:16px}
   .tooltip{box-shadow:0 8px 24px -12px rgba(20,32,51,.35)}
+  /* 휴대폰: 그래프를 위, 범례·상세를 아래로 */
+  @media (max-width: 760px){
+    body{height:auto;min-height:100vh;overflow:auto}
+    header{flex-wrap:wrap;gap:12px;padding:12px 16px}
+    .logo{flex:1 1 100%}
+    .header-stats{order:3;flex:1 1 100%;justify-content:space-between;gap:8px}
+    .stat-val{font-size:18px}.stat-label{font-size:11px}
+    .header-controls{flex:1 1 100%;flex-wrap:wrap}
+    .main{flex-direction:column;overflow:visible}
+    .graph-area{order:-1;height:62vh;min-height:380px;flex:none}
+    .sidebar{width:100%;border-right:0;border-top:1px solid var(--border);overflow:visible}
+    .detail-val{max-width:60%}
+    .alert-bar{flex-wrap:wrap;padding:10px 16px}
+    .alert-muted{margin-left:0}
+  }
 </style>
 </head>
 <body>
